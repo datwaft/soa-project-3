@@ -4,3 +4,4 @@ augroup local_readonly_options
   autocmd BufRead include/deps/*.h set readonly nospell norelativenumber
   autocmd BufRead build/* set readonly nospell norelativenumber
 augroup END
+let g:c_syntax_for_h = 1
