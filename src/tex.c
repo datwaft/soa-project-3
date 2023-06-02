@@ -49,7 +49,7 @@ void gen_timeline(FILE *fp) {
   fprintf(fp, "\\end{tikzpicture}\n");
 }
 
-void gen_frame() {
+void gen_frame(void) {
   char frame_name[] = "Testing Template";
 
   FILE *fp;

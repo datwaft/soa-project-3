@@ -12,6 +12,8 @@ HEADER_DIR := include
 TEST_DIR := tests
 RESOURCES_DIR := resources
 
+LATEX_FRAMES_DIR := latex/frames
+LATEX_OUT_DIR := latex/out
 BUILD_DIR := build
 OBJ_DIR := $(BUILD_DIR)/obj
 TEST_BUILD_DIR := $(BUILD_DIR)/tests
@@ -86,7 +88,7 @@ all_tests: $(TEST_TARGET)
 .PHONY: dist
 dist: $(DIST)
 
-$(BUILD_DIR)/%: $(OBJ_DIR)/%.o $(OBJS) $(RESOURCES_OBJ) | $(BUILD_DIR)
+$(BUILD_DIR)/%: $(OBJ_DIR)/%.o $(OBJS) $(RESOURCES_OBJ) | $(BUILD_DIR) $(LATEX_FRAMES_DIR) $(LATEX_OUT_DIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 $(TEST_BUILD_DIR)/%: LDLIBS += -lcriterion
@@ -123,7 +125,7 @@ $(DIST): $(SRC_DIR) $(HEADER_DIR) $(TEST_DIR) $(RESOURCE_INDEX) $(RESOURCES_DIR)
 # ========================
 # Directory creation rules
 # ========================
-$(SRC_DIR) $(HEADER_DIR) $(TEST_DIR) $(RESOURCES_DIR) $(BUILD_DIR) $(OBJ_DIR) $(DEP_DIR) $(TEST_BUILD_DIR) $(TEST_OBJ_DIR) $(SRC_BUILD_DIR) $(HEADER_BUILD_DIR):
+$(SRC_DIR) $(HEADER_DIR) $(TEST_DIR) $(RESOURCES_DIR) $(BUILD_DIR) $(OBJ_DIR) $(DEP_DIR) $(TEST_BUILD_DIR) $(TEST_OBJ_DIR) $(SRC_BUILD_DIR) $(HEADER_BUILD_DIR) $(LATEX_FRAMES_DIR) $(LATEX_OUT_DIR):
 	mkdir -p $@
 
 # ========================
@@ -137,6 +139,9 @@ test: $(TEST_TARGET)
 clean:
 	$(RM) -rf $(BUILD_DIR)
 	$(RM) -f $(DIST)
+	$(RM) -rf $(LATEX_FRAMES_DIR)
+	$(RM) -rf $(LATEX_OUT_DIR)
+
 
 .PHONY: install-hooks
 install-hooks:
