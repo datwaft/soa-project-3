@@ -10,7 +10,10 @@
 
         %% Filled regions
         \fill[color=color1!20] rectangle ($(2,0)$) -- ($(4,0)$) -- ($(4,1)$) -- ($(2,1)$);
+        \draw ($(2,0)+(1,0.5)$) node[activity,color1,font=\fontsize{6}{0}\selectfont] {1};
+
         \fill[color=color2!20] rectangle ($(8,0)$) -- ($(10,0)$) -- ($(10,1)$) -- ($(8,1)$);
+        \draw ($(8,0)+(1,0.5)$) node[activity,color2,font=\fontsize{6}{0}\selectfont] {2};
 
         % Period
         \draw[<-,thick,color=black] ($(5,0)$) -- ($(5,1.5)$) node [above=0pt,align=center,black,font=\fontsize{8}{0}\selectfont] {p1};
