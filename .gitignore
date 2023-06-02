@@ -12,3 +12,6 @@ compile_commands.json
 
 # MacOS cache
 .DS_Store
+
+# Pdflatex output files
+latex/out/
