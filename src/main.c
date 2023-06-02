@@ -3,6 +3,7 @@
 
 #include "table_str.h"
 #include "task.h"
+#include "tex.h"
 
 int main(int argc, char **argv) {
   task_t const tasks[] = {
@@ -14,6 +15,8 @@ int main(int argc, char **argv) {
   char buffer[TASK_TBL_ROW_LENGTH * (3 + 4)];
   tasks_to_tbl(buffer, tasks, 3);
   puts(buffer);
+
+  gen();
 
   return EXIT_SUCCESS;
 }
