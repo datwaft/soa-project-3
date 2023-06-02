@@ -21,13 +21,11 @@
         \draw[->] ($(0,0)$) -- ($(14,0)$);
 
         %% Ticks
-        \foreach \x in {0,2,...,12}
-        \draw(\x cm,3pt) -- (\x cm,-1pt);
-
-        %% Labels
-        \foreach \i \j in {0/0,2/2,4/4,6/6,8/8,10/10,12/12}{
-                \draw (\i,0) node[below=0.5pt] {\j} ;
+        \foreach \x in {0,2,...,12} {
+                \draw(\x cm,3pt) -- (\x cm,-1pt);
+                \draw (\x,0) node[below=0.5pt, font=\fontsize{8}{0}\selectfont] {\x} ;
             }
+
     \end{tikzpicture}
 
 \end{frame}
