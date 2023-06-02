@@ -21,6 +21,10 @@
 \definecolor{color8}{RGB}{128,128,128}
 \definecolor{color9}{RGB}{128,0,0}
 
+% tikz Style
+\tikzstyle{descript} = [text = black,align=center, minimum height=1.8cm, align=center, outer sep=0pt,font = \footnotesize]
+\tikzstyle{activity} =[align=center,outer sep=1pt]
+
 \title[]{Proyecto 3 - Presentación de Ejecución}
 \subtitle{Sistemas Operativos Avanzados}
 \author[SOA - Proyecto 3]{David Guevara \and  Michael Yip \and Miguel Abreu \and Victor Ortiz}
@@ -37,40 +41,7 @@
     This is some text in the first frame. This is some text in the first frame. This is some text in the first frame.
 \end{frame}
 
-\begin{frame}
-
-    \frametitle{Graphics}
-    \tikzstyle{descript} = [text = black,align=center, minimum height=1.8cm, align=center, outer sep=0pt,font = \footnotesize]
-    \tikzstyle{activity} =[align=center,outer sep=1pt]
-
-    \begin{tikzpicture}[very thick, black, scale=.8]
-        \small
-
-        % Title
-        \draw ($(0,2)$) node[activity, black] {RM};
-
-        %% Filled regions
-        \fill[color=color1!20] rectangle ($(2,0)$) -- ($(4,0)$) -- ($(4,1)$) -- ($(2,1)$);
-        \fill[color=color2!20] rectangle ($(8,0)$) -- ($(10,0)$) -- ($(10,1)$) -- ($(8,1)$);
-
-        % Period
-        \draw[<-,thick,color=black] ($(5,0)$) -- ($(5,1.5)$) node [above=0pt,align=center,black,font=\fontsize{8}{0}\selectfont] {p1};
-
-        \draw[<-,thick,color=black] ($(8,0)$) -- ($(8,1.5)$) node [above=0pt,align=center,black,font=\fontsize{8}{0}\selectfont] {p2, p3};
-
-        %% Arrow
-        \draw[->] ($(0,0)$) -- ($(14,0)$);
-
-        %% Ticks
-        \foreach \x in {0,2,...,12}
-        \draw(\x cm,3pt) -- (\x cm,-1pt);
-
-        %% Labels
-        \foreach \i \j in {0/0,2/2,4/4,6/6,8/8,10/10,12/12}{
-                \draw (\i,0) node[below=0.5pt] {\j} ;
-            }
-    \end{tikzpicture}
-
-\end{frame}
+\input{latex/frame-reference.tex}
+\input{latex/frames/frame1.tex}
 
 \end{document}
