@@ -49,18 +49,23 @@ void gen_timeline(FILE *fp) {
   fprintf(fp, "\\end{tikzpicture}\n");
 }
 
-void gen_frame(void) {
-  char frame_name[] = "Testing Template";
-
-  FILE *fp;
-  fp = fopen("latex/frames/frame1.tex", "w");
+void gen_frame(FILE *fp, const char *frame_title) {
 
   fprintf(fp, "\\begin{frame}\n");
-  fprintf(fp, "\\frametitle{%s}\n", frame_name);
+  fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
   gen_timeline(fp);
 
   fprintf(fp, "\\end{frame}\n");
+}
+
+void gen_all_frames(void) {
+
+  FILE *fp;
+  fp = fopen("latex/frames/frame1.tex", "w");
+
+  gen_frame(fp, "EDF Run");
+  gen_frame(fp, "RM Run");
 
   fclose(fp);
 }
