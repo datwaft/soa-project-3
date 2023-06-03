@@ -112,10 +112,13 @@ void compile_tex(void) {
   // need to compile twice for some reason...
   // otherwise pdf will have extra page with error
 
-  char cmd[100];
-  sprintf(cmd, "pdflatex -output-directory=%s %s", PDFLATEX_OUT,
-          BEAMER_TEX_TEMPLATE);
+  char pdflatex_cmd[100];
+  sprintf(pdflatex_cmd, "pdflatex --job-name=RESULT -output-directory=%s %s",
+          PDFLATEX_OUT, BEAMER_TEX_TEMPLATE);
 
-  system(cmd);
-  system(cmd);
+  system(pdflatex_cmd);
+  system(pdflatex_cmd);
+
+  system("cp latex/out/beamer-template.pdf latex/out/Scheduling-Test.pdf");
+  system("cd latex/out/ && rm beamer-template*");
 }
