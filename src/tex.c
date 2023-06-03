@@ -99,7 +99,7 @@ void gen_frame_single_timeline(FILE *fp, const char *frame_title) {
 void gen_tex(void) {
 
   FILE *fp;
-  fp = fopen("latex/frames/frame1.tex", "w");
+  fp = fopen(BEAMER_TEX_FRAMES, "w");
 
   //   gen_frame(fp, "RM Run");
   gen_frame_multiple_timeline(fp, "Multiple");
@@ -109,8 +109,13 @@ void gen_tex(void) {
 }
 
 void compile_tex(void) {
-  // need to compile twice for some reason... otherwise will add page num in
-  // slides
-  system("pdflatex -output-directory=latex/out/ latex/beamer-template.tex && "
-         "pdflatex -output-directory=latex/out/ latex/beamer-template.tex");
+  // need to compile twice for some reason...
+  // otherwise pdf will have extra page with error
+
+  char cmd[100];
+  sprintf(cmd, "pdflatex -output-directory=%s %s", PDFLATEX_OUT,
+          BEAMER_TEX_TEMPLATE);
+
+  system(cmd);
+  system(cmd);
 }

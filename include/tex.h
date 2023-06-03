@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define BEAMER_TEX_TEMPLATE "latex/beamer-template.tex"
+#define BEAMER_TEX_FRAMES "latex/frames/uber-frames.tex"
+#define PDFLATEX_OUT "latex/out/"
+
 void compile_tex(void);
 void gen_timeline(FILE *fp, const char *algorithm);
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm);
