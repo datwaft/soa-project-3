@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void compile_tex(void);
 void gen_timeline(FILE *fp, const char *algorithm);
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm);
 void draw_task(FILE *fp, int task_id, int start, int finish);

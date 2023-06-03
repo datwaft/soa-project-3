@@ -102,8 +102,15 @@ void gen_tex(void) {
   fp = fopen("latex/frames/frame1.tex", "w");
 
   //   gen_frame(fp, "RM Run");
-  gen_frame_multiple_timeline(fp, "Multiple ");
+  gen_frame_multiple_timeline(fp, "Multiple");
   gen_frame_single_timeline(fp, "Single");
 
   fclose(fp);
+}
+
+void compile_tex(void) {
+  // need to compile twice for some reason... otherwise will add page num in
+  // slides
+  system("pdflatex -output-directory=latex/out/ latex/beamer-template.tex && "
+         "pdflatex -output-directory=latex/out/ latex/beamer-template.tex");
 }

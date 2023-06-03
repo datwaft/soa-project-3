@@ -17,6 +17,7 @@ int main(int argc, char **argv) {
   puts(buffer);
 
   gen_tex();
+  compile_tex();
 
   //
 
