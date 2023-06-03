@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
   tasks_to_tbl(buffer, tasks, 3);
   puts(buffer);
 
-  gen_all_frames();
+  gen_tex();
 
   //
 

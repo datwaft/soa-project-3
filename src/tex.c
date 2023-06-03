@@ -3,18 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-void gen_timeline(FILE *fp) {
-  char algorithm_name[] = "RM";
-
-  fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=.7]\n");
-  fprintf(fp, "\\small\n");
-
-  fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm_name);
-
+/*
+Draw a single processing time.
+*/
+void draw_task(FILE *fp, int task_id, int start, int finish) {
+  int color = task_id; // 1 to 9 as defined in latex/beamer-template.tex
   // task fill
-  int start = 0;
-  int finish = 2;
-  int color = 1; // as defined in beamer-template
   fprintf(fp,
           "\\fill[color=color%d!20] rectangle ($(%d,0)$) -- ($(%d,0)$) -- "
           "($(%d,1)$) -- ($(%d,1)$);\n",
@@ -23,8 +17,24 @@ void gen_timeline(FILE *fp) {
   // task fill, middle task name placement
   fprintf(fp,
           "\\draw ($(%d,0)+(%f,0.5)$) "
-          "node[activity,color%d,font=\\fontsize{6}{0}\\selectfont] {1};\n",
-          start, ((finish - start) / 2.0), color);
+          "node[activity,color%d,font=\\fontsize{6}{0}\\selectfont] {%d};\n",
+          start, ((finish - start) / 2.0), color, task_id);
+}
+
+/*
+Generate single timeline for an algorithm
+ */
+void gen_timeline(FILE *fp, const char *algorithm) {
+
+  fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=.7]\n");
+  fprintf(fp, "\\small\n");
+
+  fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm);
+
+  draw_task(fp, 1, 0, 2);
+  draw_task(fp, 1, 6, 8);
+  draw_task(fp, 2, 2, 4);
+  draw_task(fp, 2, 8, 10);
 
   // period
   int task_period = 6;
@@ -49,23 +59,51 @@ void gen_timeline(FILE *fp) {
   fprintf(fp, "\\end{tikzpicture}\n");
 }
 
-void gen_frame(FILE *fp, const char *frame_title) {
+/*
+Generate a single frame (slide)
+*/
+void gen_frame(FILE *fp, const char *frame_title, const char *algorithm) {
 
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
-  gen_timeline(fp);
+  gen_timeline(fp, algorithm);
 
   fprintf(fp, "\\end{frame}\n");
 }
 
-void gen_all_frames(void) {
+/*
+Generate multiple algorithm timeline in a single frame (slide)
+*/
+void gen_frame_multiple_timeline(FILE *fp, const char *frame_title) {
+
+  fprintf(fp, "\\begin{frame}\n");
+  fprintf(fp, "\\frametitle{%s}\n", frame_title);
+
+  gen_timeline(fp, "EDF");
+  gen_timeline(fp, "RM");
+  gen_timeline(fp, "LLF");
+
+  fprintf(fp, "\\end{frame}\n");
+}
+
+/*
+Generate multiple frames with single timelines
+*/
+void gen_frame_single_timeline(FILE *fp, const char *frame_title) {
+  gen_frame(fp, frame_title, "EDF");
+  gen_frame(fp, frame_title, "RM");
+  gen_frame(fp, frame_title, "LLF");
+}
+
+void gen_tex(void) {
 
   FILE *fp;
   fp = fopen("latex/frames/frame1.tex", "w");
 
-  gen_frame(fp, "EDF Run");
-  gen_frame(fp, "RM Run");
+  //   gen_frame(fp, "RM Run");
+  gen_frame_multiple_timeline(fp, "Multiple ");
+  gen_frame_single_timeline(fp, "Single");
 
   fclose(fp);
 }
