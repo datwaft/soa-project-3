@@ -75,25 +75,61 @@ void gen_frame(FILE *fp, const char *frame_title, const char *algorithm) {
 /*
 Generate multiple algorithm timeline in a single frame (slide)
 */
-void gen_frame_multiple_timeline(FILE *fp, const char *frame_title) {
+void execute_n_display_all_in_one(const char *frame_title, int rm_active,
+                                  int edf_active, int llf_active) {
+  FILE *fp;
+  fp = fopen(BEAMER_TEX_FRAMES, "w");
 
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
-  gen_timeline(fp, "EDF");
-  gen_timeline(fp, "RM");
-  gen_timeline(fp, "LLF");
+  if (rm_active) {
+    // calculate rm
+    gen_timeline(fp, "RM");
+  }
+
+  if (edf_active) {
+    // calculate edf
+    gen_timeline(fp, "EDF");
+  }
+
+  if (llf_active) {
+    // calculate llf
+    gen_timeline(fp, "LLF");
+  }
 
   fprintf(fp, "\\end{frame}\n");
+
+  fclose(fp);
+
+  compile_tex();
 }
 
 /*
 Generate multiple frames with single timelines
 */
-void gen_frame_single_timeline(FILE *fp, const char *frame_title) {
-  gen_frame(fp, frame_title, "EDF");
-  gen_frame(fp, frame_title, "RM");
-  gen_frame(fp, frame_title, "LLF");
+void execute_n_display_separate(int rm_active, int edf_active, int llf_active) {
+  FILE *fp;
+  fp = fopen(BEAMER_TEX_FRAMES, "w");
+
+  if (rm_active) {
+    // calculate rm
+    gen_frame(fp, "RM Resultado", "RM");
+  }
+
+  if (edf_active) {
+    // calculate edf
+    gen_frame(fp, "EDF Resultado", "EDF");
+  }
+
+  if (llf_active) {
+    // calculate llf
+    gen_frame(fp, "LLF Resultado", "LLF");
+  }
+
+  fclose(fp);
+
+  compile_tex();
 }
 
 void gen_tex(void) {
@@ -102,8 +138,8 @@ void gen_tex(void) {
   fp = fopen(BEAMER_TEX_FRAMES, "w");
 
   //   gen_frame(fp, "RM Run");
-  gen_frame_multiple_timeline(fp, "Multiple");
-  gen_frame_single_timeline(fp, "Single");
+  // execute_n_display_all_in_one("Multiple");
+  // execute_n_display_separate("Single");
 
   fclose(fp);
 }
@@ -121,4 +157,5 @@ void compile_tex(void) {
 
   system("cp latex/out/beamer-template.pdf latex/out/Scheduling-Test.pdf");
   system("cd latex/out/ && rm beamer-template*");
+  system("open latex/out/Scheduling-Test.pdf");
 }

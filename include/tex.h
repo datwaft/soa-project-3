@@ -8,11 +8,18 @@
 #define PDFLATEX_OUT "latex/out/"
 
 void compile_tex(void);
+
 void gen_timeline(FILE *fp, const char *algorithm);
+
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm);
+
 void draw_task(FILE *fp, int task_id, int start, int finish);
-void gen_frame_multiple_timeline(FILE *fp, const char *frame_title);
-void gen_frame_single_timeline(FILE *fp, const char *frame_title);
+
+void execute_n_display_all_in_one(const char *frame_title, int rm_active,
+                                  int edf_active, int llf_active);
+
+void execute_n_display_separate(int rm_active, int edf_active, int llf_active);
+
 void gen_tex(void);
 
 #endif // !TEX_H

@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "tex.h"
 
 #include <math.h>
 #include <stdbool.h>
@@ -115,7 +116,7 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
   bool llf_active =
       gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbtn_llf));
 
-  int sdf = gtk_combo_box_get_active(cb_display_mode);
+  int display_option = gtk_combo_box_get_active(cb_display_mode);
 
   gint task_n = gtk_spin_button_get_value(spin_task_num);
 
@@ -152,9 +153,26 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
     // execution_n[i]);
   }
 
+  // at least one display mode selected
   if (!(rm_active || edf_active || llf_active)) {
     failure_dialog();
   } else {
+
+    switch (display_option) {
+    case 0:
+      // execute_n_display_all_in_one(... rm_active, edf_active, llf_active)
+      execute_n_display_separate(rm_active, edf_active, llf_active);
+      g_print("selected separados");
+      break;
+
+    case 1:
+      // execute_n_display_separate
+      execute_n_display_all_in_one("Scheduling Resultados", rm_active,
+                                   edf_active, llf_active);
+      g_print("selected todo en uno");
+      break;
+    }
+
     success_dialog();
   }
 
