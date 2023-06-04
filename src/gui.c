@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "task.h"
 #include "tex.h"
 
 #include <math.h>
@@ -128,7 +129,7 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
       gtk_builder_get_object(user_data->builder, "box_task_config"));
   GList *children = gtk_container_get_children(box_task_config);
 
-  uint64_t execution_n[task_n];
+  int64_t execution_n[task_n];
   int64_t period_n[task_n];
 
   for (gint i = 0; children; ++i, children = children->next) {
@@ -140,21 +141,11 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
     period_n[i] = period_column_value;
   }
 
+  task_t *tasks = malloc(task_n * sizeof(task_t));
   for (gint i = 0; i < task_n; ++i) {
-    char info[10];
-    sprintf(info, "%ld - %ld\n", execution_n[i], period_n[i]);
-    g_print(info);
-    // args_t *args = malloc(sizeof(args_t));
-
-    // args->i = 0;
-    // args->n = period_n[i] * 50;
-    // args->result = 0;
-    // args->sign = 1;
-    // args->divisor = 1;
-    // args->row = generate_execution_row(i, user_data);
-
-    // scheduler_create_task((scheduler_f_addr_t)calculate_pi, args,
-    // execution_n[i]);
+    tasks[i].id = i;
+    tasks[i].execution = execution_n[i];
+    tasks[i].period = period_n[i];
   }
 
   // at least one display mode selected
@@ -172,7 +163,6 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
     case 1:
       execute_n_display_all_in_one("Scheduling Resultados", rm_active,
                                    edf_active, llf_active);
-      g_print("selected todo en uno");
       break;
     }
 
