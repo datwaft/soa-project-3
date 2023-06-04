@@ -132,16 +132,13 @@ void execute_n_display_separate(int rm_active, int edf_active, int llf_active) {
   compile_tex();
 }
 
+// for testing
 void gen_tex(void) {
-
-  FILE *fp;
-  fp = fopen(BEAMER_TEX_FRAMES, "w");
 
   //   gen_frame(fp, "RM Run");
   // execute_n_display_all_in_one("Multiple");
   // execute_n_display_separate("Single");
-
-  fclose(fp);
+  execute_n_display_separate(1, 1, 1);
 }
 
 void compile_tex(void) {

@@ -9,6 +9,10 @@
 #include <unistd.h>
 
 GtkApplication *application_new(void) {
+
+  // prevent printing weird things
+  gtk_disable_setlocale();
+
   GtkApplication *application =
       gtk_application_new(APPLICATION_ID, G_APPLICATION_FLAGS_NONE);
   g_signal_connect(application, "activate", G_CALLBACK(application_on_activate),
@@ -160,13 +164,12 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
 
     switch (display_option) {
     case 0:
-      // execute_n_display_all_in_one(... rm_active, edf_active, llf_active)
       execute_n_display_separate(rm_active, edf_active, llf_active);
-      g_print("selected separados");
+      g_print("selected separados - algorithm: %d %d %d", rm_active, edf_active,
+              llf_active);
       break;
 
     case 1:
-      // execute_n_display_separate
       execute_n_display_all_in_one("Scheduling Resultados", rm_active,
                                    edf_active, llf_active);
       g_print("selected todo en uno");
