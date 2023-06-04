@@ -1,4 +1,5 @@
 #include "tex.h"
+#include "step.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,17 +25,18 @@ void draw_task(FILE *fp, int task_id, int start, int finish) {
 /*
 Generate single timeline for an algorithm
  */
-void gen_timeline(FILE *fp, const char *algorithm) {
+void gen_timeline(FILE *fp, const char *algorithm, step_t *steps) {
 
   fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=.7]\n");
   fprintf(fp, "\\small\n");
 
   fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm);
 
-  draw_task(fp, 1, 0, 2);
-  draw_task(fp, 1, 6, 8);
-  draw_task(fp, 2, 2, 4);
-  draw_task(fp, 2, 8, 10);
+  // draw alls
+  for (int i = 0; i < 6; i++) {
+    draw_task(fp, steps[i].task_id, steps[i].duration.start,
+              steps[i].duration.finish);
+  }
 
   // period
   int task_period = 6;
@@ -62,12 +64,13 @@ void gen_timeline(FILE *fp, const char *algorithm) {
 /*
 Generate a single frame (slide)
 */
-void gen_frame(FILE *fp, const char *frame_title, const char *algorithm) {
+void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
+               step_t *steps) {
 
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
-  gen_timeline(fp, algorithm);
+  gen_timeline(fp, algorithm, steps);
 
   fprintf(fp, "\\end{frame}\n");
 }
@@ -83,19 +86,28 @@ void execute_n_display_all_in_one(const char *frame_title, int rm_active,
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
+  step_t steps[] = {
+      (step_t){.task_id = 1, .duration = {.start = 0, .finish = 2}},
+      (step_t){.task_id = 1, .duration = {.start = 4, .finish = 6}},
+      (step_t){.task_id = 1, .duration = {.start = 8, .finish = 10}},
+      (step_t){.task_id = 2, .duration = {.start = 2, .finish = 4}},
+      (step_t){.task_id = 2, .duration = {.start = 6, .finish = 8}},
+      (step_t){.task_id = 3, .duration = {.start = 10, .finish = 11}},
+  };
+
   if (rm_active) {
     // calculate rm
-    gen_timeline(fp, "RM");
+    gen_timeline(fp, "RM", steps);
   }
 
   if (edf_active) {
     // calculate edf
-    gen_timeline(fp, "EDF");
+    gen_timeline(fp, "EDF", steps);
   }
 
   if (llf_active) {
     // calculate llf
-    gen_timeline(fp, "LLF");
+    gen_timeline(fp, "LLF", steps);
   }
 
   fprintf(fp, "\\end{frame}\n");
@@ -112,19 +124,28 @@ void execute_n_display_separate(int rm_active, int edf_active, int llf_active) {
   FILE *fp;
   fp = fopen(BEAMER_TEX_FRAMES, "w");
 
+  step_t steps[] = {
+      (step_t){.task_id = 1, .duration = {.start = 0, .finish = 1}},
+      (step_t){.task_id = 1, .duration = {.start = 4, .finish = 5}},
+      (step_t){.task_id = 1, .duration = {.start = 8, .finish = 10}},
+      (step_t){.task_id = 2, .duration = {.start = 2, .finish = 4}},
+      (step_t){.task_id = 2, .duration = {.start = 6, .finish = 8}},
+      (step_t){.task_id = 3, .duration = {.start = 10, .finish = 11}},
+  };
+
   if (rm_active) {
     // calculate rm
-    gen_frame(fp, "RM Resultado", "RM");
+    gen_frame(fp, "RM Resultado", "RM", steps);
   }
 
   if (edf_active) {
     // calculate edf
-    gen_frame(fp, "EDF Resultado", "EDF");
+    gen_frame(fp, "EDF Resultado", "EDF", steps);
   }
 
   if (llf_active) {
     // calculate llf
-    gen_frame(fp, "LLF Resultado", "LLF");
+    gen_frame(fp, "LLF Resultado", "LLF", steps);
   }
 
   fclose(fp);
