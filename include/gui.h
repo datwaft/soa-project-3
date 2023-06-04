@@ -29,4 +29,8 @@ static void generate_configuration_rows(int row_n, user_data_t *user_data);
 
 static void clear_configuration_rows(user_data_t *user_data);
 
+static void success_dialog(void);
+
+static void failure_dialog(void);
+
 #endif // !GUI_H

@@ -59,7 +59,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton">
+              <object class="GtkCheckButton" id="checkbtn_rm">
                 <property name="label" translatable="yes">RM	| Rate Monothonic</property>
                 <property name="width-request">1</property>
                 <property name="height-request">40</property>
@@ -74,7 +74,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton">
+              <object class="GtkCheckButton" id="checkbtn_edf">
                 <property name="label" translatable="yes">EDF	| Earliest Dealine First</property>
                 <property name="width-request">1</property>
                 <property name="height-request">40</property>
@@ -89,7 +89,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton">
+              <object class="GtkCheckButton" id="checkbtn_llf">
                 <property name="label" translatable="yes">LLF	| Least Laxity First</property>
                 <property name="width-request">1</property>
                 <property name="height-request">40</property>
@@ -248,6 +248,7 @@
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <signal name="clicked" handler="on_button_execute_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="x">720</property>
@@ -255,7 +256,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkComboBoxText">
+              <object class="GtkComboBoxText" id="cb_display_mode">
                 <property name="width-request">250</property>
                 <property name="height-request">40</property>
                 <property name="visible">True</property>

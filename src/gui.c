@@ -35,20 +35,20 @@ void window_on_delete_event(GtkWidget *widget, gpointer user_data) {
 }
 
 void on_changed_sbtn_task_num(GtkComboBox *widget, user_data_t *user_data) {
-  GtkSpinButton *spin_thread_num = GTK_SPIN_BUTTON(
+  GtkSpinButton *spin_task_num = GTK_SPIN_BUTTON(
       gtk_builder_get_object(user_data->builder, "spin_task_num"));
-  gint new_rows = gtk_spin_button_get_value(spin_thread_num);
+  gint new_rows = gtk_spin_button_get_value(spin_task_num);
 
   clear_configuration_rows(user_data);
   generate_configuration_rows(new_rows, user_data);
 }
 
 static void clear_configuration_rows(user_data_t *user_data) {
-  GtkContainer *box_thread_config = GTK_CONTAINER(
+  GtkContainer *box_task_config = GTK_CONTAINER(
       gtk_builder_get_object(user_data->builder, "box_task_config"));
-  GList *children = gtk_container_get_children(box_thread_config);
+  GList *children = gtk_container_get_children(box_task_config);
   while (children) {
-    gtk_container_remove(box_thread_config, children->data);
+    gtk_container_remove(box_task_config, children->data);
     children = children->next;
   }
 }
@@ -80,12 +80,111 @@ static void generate_configuration_rows(int row_n, user_data_t *user_data) {
     gtk_grid_set_column_homogeneous(GTK_GRID(grid_row), TRUE);
     gtk_grid_set_column_spacing(GTK_GRID(grid_row), 3);
 
-    GtkBox *box_thread_config =
+    GtkBox *box_task_config =
         GTK_BOX(gtk_builder_get_object(user_data->builder, "box_task_config"));
-    gtk_box_pack_start(box_thread_config, grid_row, FALSE, FALSE, 3);
+    gtk_box_pack_start(box_task_config, grid_row, FALSE, FALSE, 3);
 
     gtk_widget_show(sbtn_execution);
     gtk_widget_show(sbtn_period);
     gtk_widget_show(label_row);
   }
+}
+
+void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
+
+  GtkComboBox *cb_display_mode = GTK_COMBO_BOX(
+      gtk_builder_get_object(user_data->builder, "cb_display_mode"));
+
+  GtkSpinButton *spin_task_num = GTK_SPIN_BUTTON(
+      gtk_builder_get_object(user_data->builder, "spin_task_num"));
+
+  GtkCheckButton *checkbtn_rm = GTK_CHECK_BUTTON(
+      gtk_builder_get_object(user_data->builder, "checkbtn_rm"));
+
+  GtkCheckButton *checkbtn_edf = GTK_CHECK_BUTTON(
+      gtk_builder_get_object(user_data->builder, "checkbtn_edf"));
+
+  GtkCheckButton *checkbtn_llf = GTK_CHECK_BUTTON(
+      gtk_builder_get_object(user_data->builder, "checkbtn_llf"));
+
+  bool rm_active = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbtn_rm));
+
+  bool edf_active =
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbtn_edf));
+
+  bool llf_active =
+      gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(checkbtn_llf));
+
+  int sdf = gtk_combo_box_get_active(cb_display_mode);
+
+  gint task_n = gtk_spin_button_get_value(spin_task_num);
+
+  GtkContainer *box_task_config = GTK_CONTAINER(
+      gtk_builder_get_object(user_data->builder, "box_task_config"));
+  GList *children = gtk_container_get_children(box_task_config);
+
+  uint64_t execution_n[task_n];
+  int64_t period_n[task_n];
+
+  for (gint i = 0; children; ++i, children = children->next) {
+    gint execution_column_value = gtk_spin_button_get_value(
+        GTK_SPIN_BUTTON(gtk_grid_get_child_at(GTK_GRID(children->data), 1, 0)));
+    gint period_column_value = gtk_spin_button_get_value(
+        GTK_SPIN_BUTTON(gtk_grid_get_child_at(GTK_GRID(children->data), 2, 0)));
+    execution_n[i] = execution_column_value;
+    period_n[i] = period_column_value;
+  }
+
+  for (gint i = 0; i < task_n; ++i) {
+    char info[10];
+    sprintf(info, "%ld - %ld\n", execution_n[i], period_n[i]);
+    g_print(info);
+    // args_t *args = malloc(sizeof(args_t));
+
+    // args->i = 0;
+    // args->n = period_n[i] * 50;
+    // args->result = 0;
+    // args->sign = 1;
+    // args->divisor = 1;
+    // args->row = generate_execution_row(i, user_data);
+
+    // scheduler_create_task((scheduler_f_addr_t)calculate_pi, args,
+    // execution_n[i]);
+  }
+
+  if (!(rm_active || edf_active || llf_active)) {
+    failure_dialog();
+  } else {
+    success_dialog();
+  }
+
+  //   execute_scheduler(user_data);
+}
+
+static void success_dialog(void) {
+
+  GtkWidget *message_widget = gtk_message_dialog_new(
+      NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Exito!");
+
+  gtk_message_dialog_format_secondary_text(
+      GTK_MESSAGE_DIALOG(message_widget),
+      "Se ha creado un PDF con los resultados de pruebas de scheduling.");
+
+  gtk_dialog_run(GTK_DIALOG(message_widget));
+
+  gtk_widget_destroy(message_widget);
+}
+
+static void failure_dialog(void) {
+
+  GtkWidget *message_widget = gtk_message_dialog_new(
+      NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Error!");
+
+  gtk_message_dialog_format_secondary_text(
+      GTK_MESSAGE_DIALOG(message_widget),
+      "Se require elegir al menos un algoritmo de scheduling.");
+
+  gtk_dialog_run(GTK_DIALOG(message_widget));
+
+  gtk_widget_destroy(message_widget);
 }
