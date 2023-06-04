@@ -43,7 +43,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton">
+              <object class="GtkSpinButton" id="spin_task_num">
                 <property name="width-request">150</property>
                 <property name="height-request">40</property>
                 <property name="visible">True</property>
@@ -51,7 +51,7 @@
                 <property name="input-purpose">number</property>
                 <property name="adjustment">adjustment1</property>
                 <property name="numeric">True</property>
-                <property name="value">1</property>
+                <signal name="value-changed" handler="on_changed_sbtn_task_num" swapped="no"/>
               </object>
               <packing>
                 <property name="x">170</property>
@@ -60,7 +60,7 @@
             </child>
             <child>
               <object class="GtkCheckButton">
-                <property name="label" translatable="yes">RM: Rate Monothonic</property>
+                <property name="label" translatable="yes">RM	| Rate Monothonic</property>
                 <property name="width-request">1</property>
                 <property name="height-request">40</property>
                 <property name="visible">True</property>
@@ -75,7 +75,7 @@
             </child>
             <child>
               <object class="GtkCheckButton">
-                <property name="label" translatable="yes">EDF: Earliest Dealine First</property>
+                <property name="label" translatable="yes">EDF	| Earliest Dealine First</property>
                 <property name="width-request">1</property>
                 <property name="height-request">40</property>
                 <property name="visible">True</property>
@@ -90,7 +90,7 @@
             </child>
             <child>
               <object class="GtkCheckButton">
-                <property name="label" translatable="yes">LLF: Least Laxity First</property>
+                <property name="label" translatable="yes">LLF	| Least Laxity First</property>
                 <property name="width-request">1</property>
                 <property name="height-request">40</property>
                 <property name="visible">True</property>
@@ -147,7 +147,20 @@
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <placeholder/>
+                      <object class="GtkBox" id="box_task_config">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
                     </child>
                   </object>
                 </child>
@@ -166,7 +179,7 @@
                 <property name="label" translatable="yes">Tiempo Ejecución</property>
               </object>
               <packing>
-                <property name="x">368</property>
+                <property name="x">356</property>
                 <property name="y">220</property>
               </packing>
             </child>
@@ -179,7 +192,7 @@
                 <property name="label" translatable="yes"># Tarea</property>
               </object>
               <packing>
-                <property name="x">66</property>
+                <property name="x">108</property>
                 <property name="y">220</property>
               </packing>
             </child>
@@ -192,7 +205,7 @@
                 <property name="label" translatable="yes">Período</property>
               </object>
               <packing>
-                <property name="x">659</property>
+                <property name="x">632</property>
                 <property name="y">220</property>
               </packing>
             </child>

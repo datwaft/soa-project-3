@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "gui.h"
 #include "table_str.h"
 #include "task.h"
 #include "tex.h"
@@ -16,10 +17,10 @@ int main(int argc, char **argv) {
   tasks_to_tbl(buffer, tasks, 3);
   puts(buffer);
 
-  gen_tex();
-  compile_tex();
+  // gen_tex();
+  // compile_tex();
 
-  //
+  g_application_run(G_APPLICATION(application_new()), argc, argv);
 
   return EXIT_SUCCESS;
 }
