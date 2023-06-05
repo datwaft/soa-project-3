@@ -69,7 +69,9 @@ CFLAGS += -Wall -Wextra -Wpedantic \
 					-Wformat=2 -Wno-unused-parameter -Wshadow \
 					-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
 					-Wredundant-decls -Wnested-externs -Wmissing-include-dirs
-CFLAGS += -std=gnu11 $(shell pkg-config --cflags gtk+-3.0)
+CFLAGS += -std=gnu11 $(shell pkg-config --cflags gtk+-3.0) \
+					-Wno-language-extension-token -Wno-zero-length-array \
+					-Wno-gnu-statement-expression -Wno-missing-field-initializers
 CPPFLAGS += -I$(HEADER_DIR) -I$(HEADER_BUILD_DIR) -MMD -MP
 LDLIBS += -pthread $(shell pkg-config --libs gtk+-3.0) -lm
 LDFLAGS += -rdynamic
