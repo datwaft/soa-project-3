@@ -9,6 +9,9 @@
 #include "step.h"
 #include "task.h"
 
+static void schedulability_test_frame(FILE *file, char const *algorithm,
+                                      task_t tasks[], int64_t tasks_size);
+
 void draw_task(FILE *fp, int task_id, int start, int finish) {
   int color = task_id; // 1 to 9 as defined in latex/beamer-template.tex
 
@@ -96,6 +99,18 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
   FILE *fp;
   fp = fopen(BEAMER_TEX_FRAMES, "w");
 
+  if (rm_active) {
+    schedulability_test_frame(fp, "RM", tasks, task_n);
+  }
+
+  if (edf_active) {
+    schedulability_test_frame(fp, "EDF", tasks, task_n);
+  }
+
+  if (llf_active) {
+    schedulability_test_frame(fp, "LLF", tasks, task_n);
+  }
+
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
@@ -165,6 +180,18 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
                                 int edf_active, int llf_active) {
   FILE *fp;
   fp = fopen(BEAMER_TEX_FRAMES, "w");
+
+  if (rm_active) {
+    schedulability_test_frame(fp, "RM", tasks, task_n);
+  }
+
+  if (edf_active) {
+    schedulability_test_frame(fp, "EDF", tasks, task_n);
+  }
+
+  if (llf_active) {
+    schedulability_test_frame(fp, "LLF", tasks, task_n);
+  }
 
   if (rm_active) {
     // calculate RM
@@ -246,4 +273,26 @@ void compile_tex(void) {
   system("cd build/ && rm beamer-template*");
   system("open build/Scheduling-Test.pdf");
   system("cp resources/beamer-template.tex build/");
+}
+
+static void schedulability_test_frame(FILE *file, char const *algorithm,
+                                      task_t tasks[], int64_t tasks_size) {
+  fprintf(file, "\\begin{frame}\n");
+  fprintf(file, "\\frametitle{Schedulability Test - %s}\n", algorithm);
+  fprintf(file, "Schedulable if $\\mu < U(n)$\n");
+  fprintf(file, "\\begin{equation}\n");
+  double µ = calc_µ(tasks, tasks_size);
+  double U = 1.0;
+  if (strcmp(algorithm, "RM") == 0) {
+    U = calc_U_RM(tasks_size);
+  }
+  if (µ < U) {
+    fprintf(file, "%.3f < %.3f\n", µ, U);
+  } else if (µ == U) {
+    fprintf(file, "%.3f = %.3f\n", µ, U);
+  } else {
+    fprintf(file, "%.3f > %.3f\n", µ, U);
+  }
+  fprintf(file, "\\end{equation}\n");
+  fprintf(file, "\\end{frame}\n");
 }
