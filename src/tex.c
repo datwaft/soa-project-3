@@ -283,7 +283,7 @@ static void schedulability_test_frame(FILE *file, char const *algorithm,
   fprintf(file, "\\begin{equation}\n");
   double µ = calc_µ(tasks, tasks_size);
   double U = 1.0;
-  if (strcmp(algorithm, "RM") == 0) {
+  if (strcmp(algorithm, "RM") == 0 && !are_harmonic(tasks, tasks_size)) {
     U = calc_U_RM(tasks_size);
   }
   if (µ < U) {
