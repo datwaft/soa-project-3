@@ -143,7 +143,7 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
 
   task_t *tasks = malloc(task_n * sizeof(task_t));
   for (gint i = 0; i < task_n; ++i) {
-    tasks[i].id = i;
+    tasks[i].id = i + 1;
     tasks[i].execution = execution_n[i];
     tasks[i].period = period_n[i];
   }
@@ -155,19 +155,18 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
 
     switch (display_option) {
     case 0:
-      execute_n_display_separate(rm_active, edf_active, llf_active);
+      execute_n_display_separate(tasks, task_n, rm_active, edf_active,
+                                 llf_active);
       break;
 
     case 1:
-      execute_n_display_all_in_one("Scheduling Resultados", rm_active,
-                                   edf_active, llf_active);
+      execute_n_display_all_in_one(tasks, task_n, "Scheduling Resultados",
+                                   rm_active, edf_active, llf_active);
       break;
     }
 
     success_dialog();
   }
-
-  //   execute_scheduler(user_data);
 }
 
 static void success_dialog(void) {

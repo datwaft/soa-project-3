@@ -1,5 +1,6 @@
 #include "tex.h"
 #include "step.h"
+#include "task.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -22,10 +23,20 @@ void draw_task(FILE *fp, int task_id, int start, int finish) {
           start, ((finish - start) / 2.0), color, task_id);
 }
 
+void draw_period(FILE *fp, int task_id, int task_period) {
+  // int task_period = 6;
+  fprintf(fp,
+          "\\draw[<-,very thin,color=black] ($(%d,0)$) -- ($(%d,1.5)$) node "
+          "[above=0pt,align=center,black,font=\\fontsize{5}{0}\\selectfont]"
+          " {%d};\n",
+          task_period, task_period, task_id);
+}
+
 /*
 Generate single timeline for an algorithm
  */
-void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n) {
+void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
+                  task_t *tasks, int task_n) {
 
   fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=.7]\n");
   fprintf(fp, "\\small\n");
@@ -38,13 +49,15 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n) {
               steps[i].duration.finish);
   }
 
-  // period
-  int task_period = 6;
-  fprintf(fp,
-          "\\draw[<-,thick,color=black] ($(%d,0)$) -- ($(%d,1.5)$) node "
-          "[above=0pt,align=center,black,font=\\fontsize{7}{0}\\selectfont]"
-          " {p1};\n",
-          task_period, task_period);
+  // draw periods
+  int max = 15;
+  for (int i = 0; i < task_n; i++) {
+    g_print("periodos id: %d - period: %d\n", tasks[i].id, tasks[i].period);
+    int m = max / tasks[i].period;
+    for (int j = 1; j <= m; j++) {
+      draw_period(fp, tasks[i].id, tasks[i].period * j);
+    }
+  }
 
   // timeline
   int max_ticks = 15;
@@ -65,12 +78,12 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n) {
 Generate a single frame (slide)
 */
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
-               step_t *steps, int steps_n) {
+               step_t *steps, int steps_n, task_t *tasks, int task_n) {
 
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
-  gen_timeline(fp, algorithm, steps, steps_n);
+  gen_timeline(fp, algorithm, steps, steps_n, tasks, task_n);
 
   fprintf(fp, "\\end{frame}\n");
 }
@@ -78,7 +91,8 @@ void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
 /*
 Generate multiple algorithm timeline in a single frame (slide)
 */
-void execute_n_display_all_in_one(const char *frame_title, int rm_active,
+void execute_n_display_all_in_one(task_t *tasks, int task_n,
+                                  const char *frame_title, int rm_active,
                                   int edf_active, int llf_active) {
   FILE *fp;
   fp = fopen(BEAMER_TEX_FRAMES, "w");
@@ -99,17 +113,17 @@ void execute_n_display_all_in_one(const char *frame_title, int rm_active,
 
   if (rm_active) {
     // calculate rm
-    gen_timeline(fp, "RM", steps, steps_n);
+    gen_timeline(fp, "RM", steps, steps_n, tasks, task_n);
   }
 
   if (edf_active) {
     // calculate edf
-    gen_timeline(fp, "EDF", steps, steps_n);
+    gen_timeline(fp, "EDF", steps, steps_n, tasks, task_n);
   }
 
   if (llf_active) {
     // calculate llf
-    gen_timeline(fp, "LLF", steps, steps_n);
+    gen_timeline(fp, "LLF", steps, steps_n, tasks, task_n);
   }
 
   fprintf(fp, "\\end{frame}\n");
@@ -122,7 +136,8 @@ void execute_n_display_all_in_one(const char *frame_title, int rm_active,
 /*
 Generate multiple frames with single timelines
 */
-void execute_n_display_separate(int rm_active, int edf_active, int llf_active) {
+void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
+                                int edf_active, int llf_active) {
   FILE *fp;
   fp = fopen(BEAMER_TEX_FRAMES, "w");
 
@@ -140,17 +155,17 @@ void execute_n_display_separate(int rm_active, int edf_active, int llf_active) {
 
   if (rm_active) {
     // calculate rm
-    gen_frame(fp, "RM Resultado", "RM", steps, steps_n);
+    gen_frame(fp, "RM Resultado", "RM", steps, steps_n, tasks, task_n);
   }
 
   if (edf_active) {
     // calculate edf
-    gen_frame(fp, "EDF Resultado", "EDF", steps, steps_n);
+    gen_frame(fp, "EDF Resultado", "EDF", steps, steps_n, tasks, task_n);
   }
 
   if (llf_active) {
     // calculate llf
-    gen_frame(fp, "LLF Resultado", "LLF", steps, steps_n);
+    gen_frame(fp, "LLF Resultado", "LLF", steps, steps_n, tasks, task_n);
   }
 
   fclose(fp);
@@ -164,7 +179,7 @@ void gen_tex(void) {
   //   gen_frame(fp, "RM Run");
   // execute_n_display_all_in_one("Multiple");
   // execute_n_display_separate("Single");
-  execute_n_display_separate(1, 1, 1);
+  // execute_n_display_separate(1, 1, 1);
 }
 
 void compile_tex(void) {
