@@ -12,8 +12,6 @@ HEADER_DIR := include
 TEST_DIR := tests
 RESOURCES_DIR := resources
 
-LATEX_FRAMES_DIR := latex/frames
-LATEX_OUT_DIR := latex/out
 BUILD_DIR := build
 OBJ_DIR := $(BUILD_DIR)/obj
 TEST_BUILD_DIR := $(BUILD_DIR)/tests
@@ -143,8 +141,6 @@ test: $(TEST_TARGET)
 clean:
 	$(RM) -rf $(BUILD_DIR)
 	$(RM) -f $(DIST)
-	$(RM) -rf $(LATEX_FRAMES_DIR)
-	$(RM) -rf $(LATEX_OUT_DIR)
 
 
 .PHONY: install-hooks
