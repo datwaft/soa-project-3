@@ -1,10 +1,10 @@
 #include "tex.h"
+#include "algorithms.h"
 #include "step.h"
 #include "task.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 /*
 Draw a single processing time.
 */
@@ -155,7 +155,9 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
 
   if (rm_active) {
     // calculate rm
-    gen_frame(fp, "RM Resultado", "RM", steps, steps_n, tasks, task_n);
+    step_vec_t result = steps_RM(tasks, task_n);
+    gen_frame(fp, "RM Resultado", "RM", result.a, kv_size(result), tasks,
+              task_n);
   }
 
   if (edf_active) {
