@@ -182,14 +182,17 @@ steps_t steps_EDF(task_t const tasks[], size_t tasks_size) {
       hashmap_foreach_key(task, &ready_queue) {
         if (next_task == NULL) {
           next_task = task;
-        } else if (((tick - (tick % task->period)) + task->period) <
-                   ((tick - (tick % next_task->period)) + next_task->period)) {
-          next_task = task;
-        } else if (((tick - (tick % task->period)) + task->period) ==
-                       ((tick - (tick % next_task->period)) +
-                        next_task->period) &&
-                   task->id < next_task->id) {
-          next_task = task;
+        } else {
+          int64_t task_deadline =
+              ((tick - (tick % task->period)) + task->period);
+          int64_t next_task_deadline =
+              ((tick - (tick % next_task->period)) + next_task->period);
+          if (task_deadline < next_task_deadline) {
+            next_task = task;
+          } else if (task_deadline == next_task_deadline &&
+                     task->id < next_task->id) {
+            next_task = task;
+          }
         }
       }
 
