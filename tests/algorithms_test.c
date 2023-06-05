@@ -86,6 +86,24 @@ Test(steps_RM, example_1) {
 
   step_vec_t result = steps_RM(tasks, tasks_size);
 
-  cr_expect_eq(kv_size(result), 6);
+  cr_expect_arr_eq_cmp(result.a, expected, kv_size(result), step_cmp);
+}
+
+Test(steps_RM, example_2) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 1}},
+      {.task_id = 2, .duration = {.start = 1, .finish = 2}},
+      {.task_id = 3, .duration = {.start = 2, .finish = 3}},
+  };
+
+  task_t tasks[] = {
+      task_new(1, 3),
+      task_new(1, 3),
+      task_new(1, 3),
+  };
+  size_t tasks_size = 3;
+
+  step_vec_t result = steps_RM(tasks, tasks_size);
+
   cr_expect_arr_eq_cmp(result.a, expected, kv_size(result), step_cmp);
 }
