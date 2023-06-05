@@ -71,7 +71,10 @@ CFLAGS += -Wall -Wextra -Wpedantic \
 					-Wformat=2 -Wno-unused-parameter -Wshadow \
 					-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
 					-Wredundant-decls -Wnested-externs -Wmissing-include-dirs
-CFLAGS += -std=gnu11 $(shell pkg-config --cflags gtk+-3.0)
+CFLAGS += -std=gnu11 $(shell pkg-config --cflags gtk+-3.0) \
+					-Wno-language-extension-token -Wno-zero-length-array \
+					-Wno-gnu-statement-expression -Wno-missing-field-initializers
+CFLAGS += -g
 CPPFLAGS += -I$(HEADER_DIR) -I$(HEADER_BUILD_DIR) -MMD -MP
 LDLIBS += -pthread $(shell pkg-config --libs gtk+-3.0) -lm
 LDFLAGS += -rdynamic
@@ -88,26 +91,33 @@ all_tests: $(TEST_TARGET)
 .PHONY: dist
 dist: $(DIST)
 
-$(BUILD_DIR)/%: $(OBJ_DIR)/%.o $(OBJS) $(RESOURCES_OBJ) | $(BUILD_DIR) $(LATEX_FRAMES_DIR) $(LATEX_OUT_DIR)
+$(BUILD_DIR)/%: $(OBJ_DIR)/%.o $(OBJS) $(RESOURCES_OBJ)
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 $(TEST_BUILD_DIR)/%: LDLIBS += -lcriterion
-$(TEST_BUILD_DIR)/%: $(TEST_OBJ_DIR)/%.o $(OBJS) | $(TEST_BUILD_DIR)
+$(TEST_BUILD_DIR)/%: $(TEST_OBJ_DIR)/%.o $(OBJS)
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(OBJ_DIR)/%.d | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(OBJ_DIR)/%.d
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/%.o: $(SRC_BUILD_DIR)/%.c $(OBJ_DIR)/%.d | $(OBJ_DIR)
+$(OBJ_DIR)/%.o: $(SRC_BUILD_DIR)/%.c $(OBJ_DIR)/%.d
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(TEST_OBJ_DIR)/%.d | $(TEST_OBJ_DIR)
+$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(TEST_OBJ_DIR)/%.d
+	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(RESOURCES_SRC): $(RESOURCE_INDEX) $(RESOURCES) | $(SRC_BUILD_DIR)
+$(RESOURCES_SRC): $(RESOURCE_INDEX) $(RESOURCES)
+	@mkdir -p $(@D)
 	glib-compile-resources --target=$@ --sourcedir=$(RESOURCES_DIR) --generate-source $<
 
-$(RESOURCES_HEADER): $(RESOURCE_INDEX) $(RESOURCES) | $(HEADER_BUILD_DIR)
+$(RESOURCES_HEADER): $(RESOURCE_INDEX) $(RESOURCES)
+	@mkdir -p $(@D)
 	glib-compile-resources --target=$@ --sourcedir=$(RESOURCES_DIR) --generate-header $<
 
 # See https://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
@@ -121,12 +131,6 @@ $(DIST): $(SRC_DIR) $(HEADER_DIR) $(TEST_DIR) $(RESOURCE_INDEX) $(RESOURCES_DIR)
 	cp -r $^ $(basename $@)
 	tar -zcvf $@ $(basename $@)
 	rm -r $(basename $@)
-
-# ========================
-# Directory creation rules
-# ========================
-$(SRC_DIR) $(HEADER_DIR) $(TEST_DIR) $(RESOURCES_DIR) $(BUILD_DIR) $(OBJ_DIR) $(DEP_DIR) $(TEST_BUILD_DIR) $(TEST_OBJ_DIR) $(SRC_BUILD_DIR) $(HEADER_BUILD_DIR) $(LATEX_FRAMES_DIR) $(LATEX_OUT_DIR):
-	mkdir -p $@
 
 # ========================
 # Pseudo-target definition
