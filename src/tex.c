@@ -46,10 +46,8 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   }
   int max_scale = max + steps_n;
   float graph_scale = 0.7;
-  fprintf(
-      fp,
-      "\\begin{tikzpicture}[very thick, black, scale=0.5, transform shape]\n",
-      graph_scale);
+  fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=%f]\n",
+          graph_scale);
   fprintf(fp, "\\small\n");
 
   fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm);
@@ -140,7 +138,16 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
 
   if (edf_active) {
     // calculate edf
-    gen_timeline(fp, "EDF", steps, steps_n, tasks, task_n);
+    steps_t result = steps_EDF(tasks, task_n);
+    step_vec_t steps = result.steps;
+    bool ended_early = result.ended_early;
+
+    if (ended_early) {
+      gen_timeline(fp, "EDF: No Schedulable", steps.a, kv_size(steps), tasks,
+                   task_n);
+    } else {
+      gen_timeline(fp, "EDF", steps.a, kv_size(steps), tasks, task_n);
+    }
   }
 
   if (llf_active) {
@@ -189,14 +196,25 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
       gen_frame(fp, "RM Resultado", str, steps.a, kv_size(steps), tasks,
                 task_n);
     } else {
-      gen_frame(fp, "RM Resultado", "RM1", steps.a, kv_size(steps), tasks,
+      gen_frame(fp, "RM Resultado", "RM", steps.a, kv_size(steps), tasks,
                 task_n);
     }
   }
 
   if (edf_active) {
     // calculate edf
-    gen_frame(fp, "EDF Resultado", "EDF", steps, steps_n, tasks, task_n);
+
+    steps_t result = steps_EDF(tasks, task_n);
+    step_vec_t steps = result.steps;
+    bool ended_early = result.ended_early;
+
+    if (ended_early) {
+      gen_frame(fp, "EDF Resultado", "EDF: No Schedulable", steps.a,
+                kv_size(steps), tasks, task_n);
+    } else {
+      gen_frame(fp, "EDF Resultado", "EDF", steps.a, kv_size(steps), tasks,
+                task_n);
+    }
   }
 
   if (llf_active) {
