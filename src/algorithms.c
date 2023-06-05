@@ -191,7 +191,6 @@ steps_t steps_EDF(task_t const tasks[], size_t tasks_size) {
           next_task = task;
         }
       }
-      //(10 - (10 % 5)) + 5
 
       if (next_task != NULL) {
         if (current_task != NULL && current_task->id != next_task->id) {
