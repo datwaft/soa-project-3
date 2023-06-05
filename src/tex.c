@@ -26,7 +26,7 @@ void draw_task(FILE *fp, int task_id, int start, int finish) {
 void draw_period(FILE *fp, int task_id, int task_period) {
   // int task_period = 6;
   fprintf(fp,
-          "\\draw[<-,very thin,color=black] ($(%d,0)$) -- ($(%d,1.5)$) node "
+          "\\draw[<-,ultra thin,color=black] ($(%d,0)$) -- ($(%d,1.5)$) node "
           "[above=0pt,align=center,black,font=\\fontsize{5}{0}\\selectfont]"
           " {%d};\n",
           task_period, task_period, task_id);
