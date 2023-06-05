@@ -337,10 +337,10 @@ Test(steps_LLF, example_1) {
   };
   size_t tasks_size = 3;
 
-  steps_t result = steps_EDF(tasks, tasks_size);
+  steps_t result = steps_LLF(tasks, tasks_size);
   step_vec_t steps = result.steps;
   bool ended_early = result.ended_early;
 
-  cr_expect_arr_eq_cmp(steps.a, expected, 14, step_cmp);
+  cr_expect_arr_eq_cmp(steps.a, expected, 13, step_cmp);
   cr_expect_not(ended_early);
 }
