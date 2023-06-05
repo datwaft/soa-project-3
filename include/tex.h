@@ -10,10 +10,10 @@
 
 void compile_tex(void);
 
-void gen_timeline(FILE *fp, const char *algorithm, step_t *steps);
+void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n);
 
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
-               step_t *steps);
+               step_t *steps, int steps_n);
 
 void draw_task(FILE *fp, int task_id, int start, int finish);
 

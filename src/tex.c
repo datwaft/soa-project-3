@@ -25,15 +25,15 @@ void draw_task(FILE *fp, int task_id, int start, int finish) {
 /*
 Generate single timeline for an algorithm
  */
-void gen_timeline(FILE *fp, const char *algorithm, step_t *steps) {
+void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n) {
 
   fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=.7]\n");
   fprintf(fp, "\\small\n");
 
   fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm);
 
-  // draw alls
-  for (int i = 0; i < 6; i++) {
+  // draw all
+  for (int i = 0; i < steps_n; i++) {
     draw_task(fp, steps[i].task_id, steps[i].duration.start,
               steps[i].duration.finish);
   }
@@ -65,12 +65,12 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps) {
 Generate a single frame (slide)
 */
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
-               step_t *steps) {
+               step_t *steps, int steps_n) {
 
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
-  gen_timeline(fp, algorithm, steps);
+  gen_timeline(fp, algorithm, steps, steps_n);
 
   fprintf(fp, "\\end{frame}\n");
 }
@@ -95,19 +95,21 @@ void execute_n_display_all_in_one(const char *frame_title, int rm_active,
       (step_t){.task_id = 3, .duration = {.start = 10, .finish = 11}},
   };
 
+  int steps_n = sizeof(steps) / sizeof(steps[0]);
+
   if (rm_active) {
     // calculate rm
-    gen_timeline(fp, "RM", steps);
+    gen_timeline(fp, "RM", steps, steps_n);
   }
 
   if (edf_active) {
     // calculate edf
-    gen_timeline(fp, "EDF", steps);
+    gen_timeline(fp, "EDF", steps, steps_n);
   }
 
   if (llf_active) {
     // calculate llf
-    gen_timeline(fp, "LLF", steps);
+    gen_timeline(fp, "LLF", steps, steps_n);
   }
 
   fprintf(fp, "\\end{frame}\n");
@@ -131,21 +133,24 @@ void execute_n_display_separate(int rm_active, int edf_active, int llf_active) {
       (step_t){.task_id = 2, .duration = {.start = 2, .finish = 4}},
       (step_t){.task_id = 2, .duration = {.start = 6, .finish = 8}},
       (step_t){.task_id = 3, .duration = {.start = 10, .finish = 11}},
+      (step_t){.task_id = 4, .duration = {.start = 11, .finish = 12}},
   };
+
+  int steps_n = sizeof(steps) / sizeof(steps[0]);
 
   if (rm_active) {
     // calculate rm
-    gen_frame(fp, "RM Resultado", "RM", steps);
+    gen_frame(fp, "RM Resultado", "RM", steps, steps_n);
   }
 
   if (edf_active) {
     // calculate edf
-    gen_frame(fp, "EDF Resultado", "EDF", steps);
+    gen_frame(fp, "EDF Resultado", "EDF", steps, steps_n);
   }
 
   if (llf_active) {
     // calculate llf
-    gen_frame(fp, "LLF Resultado", "LLF", steps);
+    gen_frame(fp, "LLF Resultado", "LLF", steps, steps_n);
   }
 
   fclose(fp);

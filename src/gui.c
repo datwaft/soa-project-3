@@ -156,8 +156,6 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
     switch (display_option) {
     case 0:
       execute_n_display_separate(rm_active, edf_active, llf_active);
-      g_print("selected separados - algorithm: %d %d %d", rm_active, edf_active,
-              llf_active);
       break;
 
     case 1:
