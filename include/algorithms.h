@@ -20,6 +20,8 @@ double calc_µ(task_t const tasks[], size_t tasks_size);
 
 double calc_U_RM(size_t size);
 
+bool are_harmonic(task_t const tasks[], size_t tasks_size);
+
 // WARNING: the return value must be freed by the caller.
 steps_t steps_RM(task_t const tasks[], size_t tasks_size);
 

@@ -20,6 +20,18 @@ double calc_µ(task_t const tasks[], size_t tasks_size) {
 
 double calc_U_RM(size_t size) { return size * (pow(2.0, 1.0 / size) - 1.0); }
 
+bool are_harmonic(task_t const tasks[], size_t tasks_size) {
+  for (size_t i = 0; i < tasks_size; ++i) {
+    for (size_t j = 0; j < tasks_size; ++j) {
+      if (tasks[i].period % tasks[j].period != 0 &&
+          tasks[j].period % tasks[i].period != 0) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 steps_t steps_RM(task_t const tasks[], size_t tasks_size) {
   task_t const *task; // Used for iteration
 

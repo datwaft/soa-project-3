@@ -63,6 +63,49 @@ Test(calc_U_RM, example_2) {
   cr_expect_float_eq(U, 0.7435, 1e-4);
 }
 
+// ============
+// are_harmonic
+// ============
+
+Test(are_harmonic, example_1) {
+  task_t tasks[] = {
+      task_new(1, 3),
+      task_new(1, 3),
+      task_new(1, 3),
+  };
+  size_t tasks_size = 3;
+
+  bool result = are_harmonic(tasks, tasks_size);
+
+  cr_expect(result);
+}
+
+Test(are_harmonic, example_2) {
+  task_t tasks[] = {
+      task_new(1, 2),
+      task_new(1, 3),
+      task_new(1, 6),
+  };
+  size_t tasks_size = 3;
+
+  bool result = are_harmonic(tasks, tasks_size);
+
+  cr_expect_not(result);
+}
+
+Test(are_harmonic, example_3) {
+  task_t tasks[] = {
+      task_new(4, 12),
+      task_new(1, 3),
+      task_new(2, 6),
+  };
+  size_t tasks_size = 3;
+
+  bool result = are_harmonic(tasks, tasks_size);
+
+  cr_expect(result);
+}
+
 // ========
 // steps_RM
 // ========
