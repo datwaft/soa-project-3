@@ -6,6 +6,7 @@
 
 int64_t least_common_multiple(int64_t a, int64_t b);
 
-int64_t least_common_multiple_for_array(int64_t array[], size_t array_size);
+int64_t least_common_multiple_for_array(int64_t const array[],
+                                        size_t array_size);
 
 #endif /* !MATH_UTILS_H */
