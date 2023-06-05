@@ -109,17 +109,6 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
   fprintf(fp, "\\begin{frame}\n");
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
-  step_t steps[] = {
-      (step_t){.task_id = 1, .duration = {.start = 0, .finish = 2}},
-      (step_t){.task_id = 1, .duration = {.start = 4, .finish = 6}},
-      (step_t){.task_id = 1, .duration = {.start = 8, .finish = 10}},
-      (step_t){.task_id = 2, .duration = {.start = 2, .finish = 4}},
-      (step_t){.task_id = 2, .duration = {.start = 6, .finish = 8}},
-      (step_t){.task_id = 3, .duration = {.start = 10, .finish = 11}},
-  };
-
-  int steps_n = sizeof(steps) / sizeof(steps[0]);
-
   if (rm_active) {
     // calculate rm
     steps_t result = steps_RM(tasks, task_n);
@@ -152,7 +141,7 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
 
   if (llf_active) {
     // calculate llf
-    gen_timeline(fp, "LLF", steps, steps_n, tasks, task_n);
+    // gen_timeline(fp, "LLF", steps, steps_n, tasks, task_n);
   }
 
   fprintf(fp, "\\end{frame}\n");
@@ -169,18 +158,6 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
                                 int edf_active, int llf_active) {
   FILE *fp;
   fp = fopen(BEAMER_TEX_FRAMES, "w");
-
-  step_t steps[] = {
-      (step_t){.task_id = 1, .duration = {.start = 0, .finish = 1}},
-      (step_t){.task_id = 1, .duration = {.start = 4, .finish = 5}},
-      (step_t){.task_id = 1, .duration = {.start = 8, .finish = 10}},
-      (step_t){.task_id = 2, .duration = {.start = 2, .finish = 4}},
-      (step_t){.task_id = 2, .duration = {.start = 6, .finish = 8}},
-      (step_t){.task_id = 3, .duration = {.start = 10, .finish = 11}},
-      (step_t){.task_id = 4, .duration = {.start = 11, .finish = 12}},
-  };
-
-  int steps_n = sizeof(steps) / sizeof(steps[0]);
 
   if (rm_active) {
     // calculate rm
@@ -219,7 +196,7 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
 
   if (llf_active) {
     // calculate llf
-    gen_frame(fp, "LLF Resultado", "LLF", steps, steps_n, tasks, task_n);
+    // gen_frame(fp, "LLF Resultado", "LLF", steps, steps_n, tasks, task_n);
   }
 
   fclose(fp);
