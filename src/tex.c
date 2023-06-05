@@ -46,10 +46,8 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   }
 
   int max_scale = max + steps_n;
-  // int max_scale = max;
-  float graph_scale = 0.3;
   fprintf(fp, "\\resizebox{\\columnwidth}{!}{\n");
-  fprintf(fp, "\\begin{tikzpicture}[very thick, black]\n", graph_scale);
+  fprintf(fp, "\\begin{tikzpicture}[very thick, black]\n");
   fprintf(fp, "\\small\n");
 
   fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm);
