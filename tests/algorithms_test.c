@@ -84,9 +84,12 @@ Test(steps_RM, example_1) {
   };
   size_t tasks_size = 3;
 
-  step_vec_t result = steps_RM(tasks, tasks_size);
+  steps_t result = steps_RM(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
 
-  cr_expect_arr_eq_cmp(result.a, expected, kv_size(result), step_cmp);
+  cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
+  cr_expect_not(ended_early);
 }
 
 Test(steps_RM, example_2) {
@@ -103,9 +106,12 @@ Test(steps_RM, example_2) {
   };
   size_t tasks_size = 3;
 
-  step_vec_t result = steps_RM(tasks, tasks_size);
+  steps_t result = steps_RM(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
 
-  cr_expect_arr_eq_cmp(result.a, expected, kv_size(result), step_cmp);
+  cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
+  cr_expect_not(ended_early);
 }
 
 Test(steps_RM, example_3) {
@@ -127,7 +133,87 @@ Test(steps_RM, example_3) {
   };
   size_t tasks_size = 3;
 
-  step_vec_t result = steps_RM(tasks, tasks_size);
+  steps_t result = steps_RM(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
 
-  cr_expect_arr_eq_cmp(result.a, expected, kv_size(result), step_cmp);
+  cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
+  cr_expect_not(ended_early);
+}
+
+Test(steps_RM, example_4) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 1}},
+      {.task_id = 2, .duration = {.start = 1, .finish = 3}},
+      {.task_id = 3, .duration = {.start = 3, .finish = 6}},
+      {.task_id = 1, .duration = {.start = 6, .finish = 7}},
+      {.task_id = 3, .duration = {.start = 7, .finish = 9}},
+      {.task_id = 2, .duration = {.start = 9, .finish = 11}},
+      {.task_id = 3, .duration = {.start = 11, .finish = 12}},
+      {.task_id = 1, .duration = {.start = 12, .finish = 13}},
+  };
+
+  task_t tasks[] = {
+      task_new(1, 6),
+      task_new(2, 9),
+      task_new(6, 18),
+  };
+  size_t tasks_size = 3;
+
+  steps_t result = steps_RM(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
+
+  cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
+  cr_expect_not(ended_early);
+}
+
+Test(steps_RM, example_5) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 3}},
+      {.task_id = 2, .duration = {.start = 3, .finish = 6}},
+      {.task_id = 1, .duration = {.start = 6, .finish = 9}},
+  };
+
+  task_t tasks[] = {
+      task_new(3, 6),
+      task_new(4, 9),
+  };
+  size_t tasks_size = 2;
+
+  steps_t result = steps_RM(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
+
+  cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
+  cr_expect(ended_early);
+}
+
+Test(steps_RM, example_6) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 10}},
+      {.task_id = 2, .duration = {.start = 10, .finish = 20}},
+      {.task_id = 3, .duration = {.start = 20, .finish = 30}},
+      {.task_id = 1, .duration = {.start = 30, .finish = 40}},
+      {.task_id = 2, .duration = {.start = 40, .finish = 50}},
+      {.task_id = 3, .duration = {.start = 50, .finish = 52}},
+      {.task_id = 3, .duration = {.start = 52, .finish = 60}},
+      {.task_id = 1, .duration = {.start = 60, .finish = 70}},
+      {.task_id = 3, .duration = {.start = 70, .finish = 74}},
+      {.task_id = 2, .duration = {.start = 80, .finish = 90}},
+  };
+
+  task_t tasks[] = {
+      task_new(10, 30),
+      task_new(10, 40),
+      task_new(12, 52),
+  };
+  size_t tasks_size = 3;
+
+  steps_t result = steps_RM(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
+
+  cr_expect_arr_eq_cmp(steps.a, expected, 10, step_cmp);
+  cr_expect(ended_early);
 }
