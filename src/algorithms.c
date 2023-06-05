@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "deps/hashmap.h"
@@ -25,6 +26,11 @@ step_vec_t steps_RM(task_t const tasks[], size_t tasks_size) {
   HASHMAP(task_t, void) ready_queue;
   hashmap_init(&ready_queue, task_hash, task_cmp);
 
+  int64_t execution_time[tasks_size];
+  for (size_t i = 0; i < tasks_size; i++) {
+    execution_time[i] = 0;
+  }
+
   step_vec_t steps;
   kv_init(steps);
 
@@ -39,6 +45,9 @@ step_vec_t steps_RM(task_t const tasks[], size_t tasks_size) {
   step_t current_step;
   bool has_ready_queue_changed = false;
   for (int64_t tick = 0; tick <= periods_LCM; ++tick) {
+    int64_t current_task_last_executed_time =
+        (current_task == NULL) ? 0 : execution_time[current_task->id - 1];
+
     // Check if any existing task is due
     hashmap_foreach_key(task, &ready_queue) {
       if (tick % task->period == 0) {
@@ -57,7 +66,8 @@ step_vec_t steps_RM(task_t const tasks[], size_t tasks_size) {
     }
     // If current task has finished execution
     if (current_task != NULL &&
-        current_task->execution == tick - current_step.duration.start) {
+        current_task->execution == current_task_last_executed_time) {
+      execution_time[current_task->id - 1] = 0;
       current_step.duration.finish = tick;
       kv_push(step_t, steps, current_step);
       current_task = NULL;
@@ -83,17 +93,22 @@ step_vec_t steps_RM(task_t const tasks[], size_t tasks_size) {
         }
       }
 
-      if (current_task != NULL && current_task->id != next_task->id) {
-        hashmap_put(&ready_queue, current_task, (void *)1);
-        current_step.duration.finish = tick;
-        kv_push(step_t, steps, current_step);
+      if (next_task != NULL) {
+        if (current_task != NULL && current_task->id != next_task->id) {
+          hashmap_put(&ready_queue, current_task, (void *)1);
+          current_step.duration.finish = tick;
+          kv_push(step_t, steps, current_step);
+        }
+        hashmap_remove(&ready_queue, next_task);
+        current_task = next_task;
+        current_step.task_id = current_task->id;
+        current_step.duration.start = tick;
       }
-      hashmap_remove(&ready_queue, next_task);
-      current_task = next_task;
-      current_step.task_id = current_task->id;
-      current_step.duration.start = tick;
     }
     has_ready_queue_changed = false;
+    if (current_task != NULL) {
+      execution_time[current_task->id - 1] += 1;
+    }
   }
   hashmap_cleanup(&ready_queue);
   return steps;

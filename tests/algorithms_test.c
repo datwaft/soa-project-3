@@ -131,3 +131,27 @@ Test(steps_RM, example_3) {
 
   cr_expect_arr_eq_cmp(result.a, expected, kv_size(result), step_cmp);
 }
+
+Test(steps_RM, example_4) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 1}},
+      {.task_id = 2, .duration = {.start = 1, .finish = 3}},
+      {.task_id = 3, .duration = {.start = 3, .finish = 6}},
+      {.task_id = 1, .duration = {.start = 6, .finish = 7}},
+      {.task_id = 3, .duration = {.start = 7, .finish = 9}},
+      {.task_id = 2, .duration = {.start = 9, .finish = 11}},
+      {.task_id = 3, .duration = {.start = 11, .finish = 12}},
+      {.task_id = 1, .duration = {.start = 12, .finish = 13}},
+  };
+
+  task_t tasks[] = {
+      task_new(1, 6),
+      task_new(2, 9),
+      task_new(6, 18),
+  };
+  size_t tasks_size = 3;
+
+  step_vec_t result = steps_RM(tasks, tasks_size);
+
+  cr_expect_arr_eq_cmp(result.a, expected, kv_size(result), step_cmp);
+}
