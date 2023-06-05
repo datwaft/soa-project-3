@@ -5,9 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BEAMER_TEX_TEMPLATE "latex/beamer-template.tex"
-#define BEAMER_TEX_FRAMES "latex/frames/uber-frames.tex"
-#define PDFLATEX_OUT "latex/out/"
+#define BEAMER_TEX_TEMPLATE "resources/beamer-template.tex"
+#define BEAMER_TEX_FRAMES "build/uber-frames.tex"
+#define PDFLATEX_OUT "build/"
 
 void compile_tex(void);
 

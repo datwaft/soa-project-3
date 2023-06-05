@@ -193,7 +193,8 @@ void compile_tex(void) {
   system(pdflatex_cmd);
   system(pdflatex_cmd);
 
-  system("cp latex/out/beamer-template.pdf latex/out/Scheduling-Test.pdf");
-  system("cd latex/out/ && rm beamer-template*");
-  system("open latex/out/Scheduling-Test.pdf");
+  system("cp build/beamer-template.pdf build/Scheduling-Test.pdf");
+  system("cd build/ && rm beamer-template*");
+  system("open build/Scheduling-Test.pdf");
+  system("cp resources/beamer-template.tex build/");
 }
