@@ -83,6 +83,7 @@ steps_t steps_RM(task_t const tasks[], size_t tasks_size) {
     // Select a new task from the ready queue if necessary
     if (current_task == NULL || has_ready_queue_changed) {
       task_t const *next_task = NULL;
+      hashmap_put(&ready_queue, current_task, (void *)1);
       hashmap_foreach_key(task, &ready_queue) {
         if (next_task == NULL) {
           next_task = task;
@@ -95,8 +96,7 @@ steps_t steps_RM(task_t const tasks[], size_t tasks_size) {
       }
 
       if (next_task != NULL) {
-        if (current_task != NULL && current_task->id != next_task->id) {
-          hashmap_put(&ready_queue, current_task, (void *)1);
+        if (current_task != NULL) {
           current_step.duration.finish = tick;
           kv_push(step_t, steps, current_step);
         }
@@ -178,6 +178,7 @@ steps_t steps_EDF(task_t const tasks[], size_t tasks_size) {
     // Select a new task from the ready queue if necessary
     if (current_task == NULL || has_ready_queue_changed) {
       task_t const *next_task = NULL;
+      hashmap_put(&ready_queue, current_task, (void *)1);
       hashmap_foreach_key(task, &ready_queue) {
         if (next_task == NULL) {
           next_task = task;
@@ -193,8 +194,7 @@ steps_t steps_EDF(task_t const tasks[], size_t tasks_size) {
       }
 
       if (next_task != NULL) {
-        if (current_task != NULL && current_task->id != next_task->id) {
-          hashmap_put(&ready_queue, current_task, (void *)1);
+        if (current_task != NULL) {
           current_step.duration.finish = tick;
           kv_push(step_t, steps, current_step);
         }
