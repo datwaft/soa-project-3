@@ -30,7 +30,7 @@ void draw_task(FILE *fp, int task_id, int start, int finish) {
 
 void draw_period(FILE *fp, int task_id, int task_period) {
   fprintf(fp,
-          "\\draw[<-,ultra thin,color=black] ($(%d,0)$) -- ($(%d,1.5)$) node "
+          "\\draw[<-,ultra thin,color=black] ($(%d,0)$) -- ($(%d,1.3)$) node "
           "[above=0pt,align=center,black,font=\\fontsize{5}{0}\\selectfont]"
           " {%d};\n",
           task_period, task_period, task_id);
@@ -45,10 +45,11 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
       max = tasks[i].period;
   }
 
-  int max_scale = max + steps_n;
+  // int max_scale = max + steps_n;
+  int max_scale = max;
   float graph_scale = 0.7;
-  fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=%f]\n",
-          graph_scale);
+  fprintf(fp, "\\resizebox{\\columnwidth}{!}{\n");
+  fprintf(fp, "\\begin{tikzpicture}[very thick, black]\n", graph_scale);
   fprintf(fp, "\\small\n");
 
   fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm);
@@ -69,7 +70,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
 
   // timeline
   int max_ticks = max_scale;
-  int tick_scale = 2;
+  int tick_scale = max / task_n;
   fprintf(fp, "\\draw[->] ($(0,0)$) -- ($(%d,0)$);\n", max_ticks + 1);
 
   // timeline ticks & labels
@@ -80,6 +81,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
           tick_scale, max_ticks);
 
   fprintf(fp, "\\end{tikzpicture}\n");
+  fprintf(fp, "}\n");
 }
 
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
