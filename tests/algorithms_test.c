@@ -188,3 +188,32 @@ Test(steps_RM, example_5) {
   cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
   cr_expect(ended_early);
 }
+
+Test(steps_RM, example_6) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 10}},
+      {.task_id = 2, .duration = {.start = 10, .finish = 20}},
+      {.task_id = 3, .duration = {.start = 20, .finish = 30}},
+      {.task_id = 1, .duration = {.start = 30, .finish = 40}},
+      {.task_id = 2, .duration = {.start = 40, .finish = 50}},
+      {.task_id = 3, .duration = {.start = 50, .finish = 52}},
+      {.task_id = 3, .duration = {.start = 52, .finish = 60}},
+      {.task_id = 1, .duration = {.start = 60, .finish = 70}},
+      {.task_id = 3, .duration = {.start = 70, .finish = 74}},
+      {.task_id = 2, .duration = {.start = 80, .finish = 90}},
+  };
+
+  task_t tasks[] = {
+      task_new(10, 30),
+      task_new(10, 40),
+      task_new(12, 52),
+  };
+  size_t tasks_size = 3;
+
+  steps_t result = steps_RM(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
+
+  cr_expect_arr_eq_cmp(steps.a, expected, 10, step_cmp);
+  cr_expect(ended_early);
+}
