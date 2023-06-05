@@ -9,18 +9,16 @@
 #include "step.h"
 #include "task.h"
 
-/*
-Draw a single processing time.
-*/
 void draw_task(FILE *fp, int task_id, int start, int finish) {
   int color = task_id; // 1 to 9 as defined in latex/beamer-template.tex
-  // task fill
+
+  // Task fill
   fprintf(fp,
           "\\fill[color=color%d!20] rectangle ($(%d,0)$) -- ($(%d,0)$) -- "
           "($(%d,1)$) -- ($(%d,1)$);\n",
           color, start, finish, finish, start);
 
-  // task fill, middle task name placement
+  // Task fill, middle task name placement
   fprintf(fp,
           "\\draw ($(%d,0)+(%f,0.5)$) "
           "node[activity,color%d,font=\\fontsize{6}{0}\\selectfont] {%d};\n",
@@ -28,7 +26,6 @@ void draw_task(FILE *fp, int task_id, int start, int finish) {
 }
 
 void draw_period(FILE *fp, int task_id, int task_period) {
-  // int task_period = 6;
   fprintf(fp,
           "\\draw[<-,ultra thin,color=black] ($(%d,0)$) -- ($(%d,1.5)$) node "
           "[above=0pt,align=center,black,font=\\fontsize{5}{0}\\selectfont]"
@@ -36,18 +33,15 @@ void draw_period(FILE *fp, int task_id, int task_period) {
           task_period, task_period, task_id);
 }
 
-/*
-Generate single timeline for an algorithm
- */
 void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
                   task_t *tasks, int task_n) {
-
   int max = 0;
 
   for (int i = 0; i < task_n; i++) {
     if (tasks[i].period > max)
       max = tasks[i].period;
   }
+
   int max_scale = max + steps_n;
   float graph_scale = 0.7;
   fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=%f]\n",
@@ -63,9 +57,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   }
 
   // draw periods
-
   for (int i = 0; i < task_n; i++) {
-    // g_print("periodos id: %d - period: %d\n", tasks[i].id, tasks[i].period);
     int m = max / tasks[i].period;
     for (int j = 1; j <= m; j++) {
       draw_period(fp, tasks[i].id, tasks[i].period * j);
@@ -87,9 +79,6 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   fprintf(fp, "\\end{tikzpicture}\n");
 }
 
-/*
-Generate a single frame (slide)
-*/
 void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
                step_t *steps, int steps_n, task_t *tasks, int task_n) {
 
@@ -101,9 +90,6 @@ void gen_frame(FILE *fp, const char *frame_title, const char *algorithm,
   fprintf(fp, "\\end{frame}\n");
 }
 
-/*
-Generate multiple algorithm timeline in a single frame (slide)
-*/
 void execute_n_display_all_in_one(task_t *tasks, int task_n,
                                   const char *frame_title, int rm_active,
                                   int edf_active, int llf_active) {
@@ -114,10 +100,12 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
   fprintf(fp, "\\frametitle{%s}\n", frame_title);
 
   if (rm_active) {
-    // calculate rm
+    // calculate RM
+
     steps_t result = steps_RM(tasks, task_n);
     step_vec_t steps = result.steps;
     bool ended_early = result.ended_early;
+
     if (ended_early) {
       char str[100];
       sprintf(str, "RM: No Schedulable, µ=%lf, U=%lf", calc_µ(tasks, task_n),
@@ -130,7 +118,8 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
   }
 
   if (edf_active) {
-    // calculate edf
+    // calculate EDF
+
     steps_t result = steps_EDF(tasks, task_n);
     step_vec_t steps = result.steps;
     bool ended_early = result.ended_early;
@@ -144,11 +133,18 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
   }
 
   if (llf_active) {
-    // calculate llf
-    // gen_timeline(fp, "LLF", steps, steps_n, tasks, task_n);
+    // calculate LLF
+
     steps_t result = steps_LLF(tasks, task_n);
     step_vec_t steps = result.steps;
     bool ended_early = result.ended_early;
+
+    // TODO: remove this
+    for (size_t i = 0; i < kv_size(steps); ++i) {
+      char buffer[STEP_SERIALIZE_LENGTH + 1];
+      step_serialize(buffer, &kv_A(steps, i));
+      printf("%s\n", buffer);
+    }
 
     if (ended_early) {
       gen_timeline(fp, "LLF: No Schedulable", steps.a, kv_size(steps), tasks,
@@ -162,19 +158,17 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
 
   fclose(fp);
 
-  // compile_tex();
+  compile_tex();
 }
 
-/*
-Generate multiple frames with single timelines
-*/
 void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
                                 int edf_active, int llf_active) {
   FILE *fp;
   fp = fopen(BEAMER_TEX_FRAMES, "w");
 
   if (rm_active) {
-    // calculate rm
+    // calculate RM
+
     steps_t result = steps_RM(tasks, task_n);
     step_vec_t steps = result.steps;
     bool ended_early = result.ended_early;
@@ -193,7 +187,7 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
   }
 
   if (edf_active) {
-    // calculate edf
+    // calculate EDF
 
     steps_t result = steps_EDF(tasks, task_n);
     step_vec_t steps = result.steps;
@@ -209,12 +203,13 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
   }
 
   if (llf_active) {
-    // calculate llf
-    // gen_frame(fp, "LLF Resultado", "LLF", steps, steps_n, tasks, task_n);
+    // calculate LLF
+
     steps_t result = steps_LLF(tasks, task_n);
     step_vec_t steps = result.steps;
     bool ended_early = result.ended_early;
 
+    // TODO: remove this
     for (size_t i = 0; i < kv_size(steps); ++i) {
       char buffer[STEP_SERIALIZE_LENGTH + 1];
       step_serialize(buffer, &kv_A(steps, i));
@@ -232,23 +227,13 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
 
   fclose(fp);
 
-  // compile_tex();
-}
-
-// for testing
-void gen_tex(void) {
-
-  //   gen_frame(fp, "RM Run");
-  // execute_n_display_all_in_one("Multiple");
-  // execute_n_display_separate("Single");
-  // execute_n_display_separate(1, 1, 1);
+  compile_tex();
 }
 
 void compile_tex(void) {
-  // need to compile twice for some reason...
-  // otherwise pdf will have extra page with error
-
-  char pdflatex_cmd[100];
+  // Need to compile twice for some reason...
+  // Otherwise pdf will have extra page with error
+  char pdflatex_cmd[200];
   sprintf(
       pdflatex_cmd,
       "pdflatex -interaction=errorstopmode -output-directory=%s %s > /dev/null",
