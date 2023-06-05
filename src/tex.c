@@ -1,10 +1,14 @@
 #include "tex.h"
-#include "algorithms.h"
-#include "step.h"
-#include "task.h"
+
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "algorithms.h"
+#include "step.h"
+#include "task.h"
+
 /*
 Draw a single processing time.
 */
