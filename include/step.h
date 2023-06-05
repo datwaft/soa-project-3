@@ -12,4 +12,6 @@ typedef struct step_st {
   } duration;
 } step_t;
 
+int step_cmp(step_t const *step_1, step_t const *step_2);
+
 #endif /* !STEP_H */
