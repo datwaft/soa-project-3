@@ -38,7 +38,16 @@ Generate single timeline for an algorithm
 void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
                   task_t *tasks, int task_n) {
 
-  fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=.7]\n");
+  int max = 0;
+
+  for (int i = 0; i < task_n; i++) {
+    if (tasks[i].period > max)
+      max = tasks[i].period;
+  }
+  int max_scale = max + steps_n;
+  float graph_scale = 0.7;
+  fprintf(fp, "\\begin{tikzpicture}[very thick, black, scale=%f]\n",
+          graph_scale);
   fprintf(fp, "\\small\n");
 
   fprintf(fp, "\\draw ($(0,2)$) node[activity, black] {%s};\n", algorithm);
@@ -50,7 +59,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   }
 
   // draw periods
-  int max = 15;
+
   for (int i = 0; i < task_n; i++) {
     g_print("periodos id: %d - period: %d\n", tasks[i].id, tasks[i].period);
     int m = max / tasks[i].period;
@@ -60,7 +69,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   }
 
   // timeline
-  int max_ticks = 15;
+  int max_ticks = max_scale;
   int tick_scale = 2;
   fprintf(fp, "\\draw[->] ($(0,0)$) -- ($(%d,0)$);\n", max_ticks + 1);
 
@@ -113,7 +122,10 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
 
   if (rm_active) {
     // calculate rm
-    gen_timeline(fp, "RM", steps, steps_n, tasks, task_n);
+    steps_t result = steps_RM(tasks, task_n);
+    step_vec_t steps = result.steps;
+    bool ended_early = result.ended_early;
+    gen_timeline(fp, "RM", steps.a, kv_size(steps), tasks, task_n);
   }
 
   if (edf_active) {
@@ -155,9 +167,10 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
 
   if (rm_active) {
     // calculate rm
-    step_vec_t result = steps_RM(tasks, task_n);
-    gen_frame(fp, "RM Resultado", "RM", result.a, kv_size(result), tasks,
-              task_n);
+    steps_t result = steps_RM(tasks, task_n);
+    step_vec_t steps = result.steps;
+    bool ended_early = result.ended_early;
+    gen_frame(fp, "RM Resultado", "RM", steps.a, kv_size(steps), tasks, task_n);
   }
 
   if (edf_active) {
