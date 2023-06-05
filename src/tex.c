@@ -30,10 +30,10 @@ void draw_task(FILE *fp, int task_id, int start, int finish) {
 
 void draw_period(FILE *fp, int task_id, int task_period) {
   fprintf(fp,
-          "\\draw[<-,ultra thin,color=black] ($(%d,0)$) -- ($(%d,1.3)$) node "
+          "\\draw[dashed, <-,thin,color=black] ($(%d,0)$) -- ($(%d,1.3)$) node "
           "[above=0pt,align=center,black,font=\\fontsize{5}{0}\\selectfont]"
           " {%d};\n",
-          task_period, task_period, task_id);
+          task_period, (task_period + task_id), task_id);
 }
 
 void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
@@ -45,9 +45,9 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
       max = tasks[i].period;
   }
 
-  // int max_scale = max + steps_n;
-  int max_scale = max;
-  float graph_scale = 0.7;
+  int max_scale = max + steps_n;
+  // int max_scale = max;
+  float graph_scale = 0.3;
   fprintf(fp, "\\resizebox{\\columnwidth}{!}{\n");
   fprintf(fp, "\\begin{tikzpicture}[very thick, black]\n", graph_scale);
   fprintf(fp, "\\small\n");
@@ -62,7 +62,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
 
   // draw periods
   for (int i = 0; i < task_n; i++) {
-    int m = max / tasks[i].period;
+    int m = max_scale / tasks[i].period;
     for (int j = 1; j <= m; j++) {
       draw_period(fp, tasks[i].id, tasks[i].period * j);
     }
