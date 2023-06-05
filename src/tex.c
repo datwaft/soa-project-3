@@ -61,7 +61,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   // draw periods
 
   for (int i = 0; i < task_n; i++) {
-    g_print("periodos id: %d - period: %d\n", tasks[i].id, tasks[i].period);
+    // g_print("periodos id: %d - period: %d\n", tasks[i].id, tasks[i].period);
     int m = max / tasks[i].period;
     for (int j = 1; j <= m; j++) {
       draw_period(fp, tasks[i].id, tasks[i].period * j);
@@ -158,7 +158,7 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
 
   fclose(fp);
 
-  compile_tex();
+  // compile_tex();
 }
 
 /*
@@ -211,6 +211,12 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
     step_vec_t steps = result.steps;
     bool ended_early = result.ended_early;
 
+    for (size_t i = 0; i < kv_size(steps); ++i) {
+      char buffer[STEP_SERIALIZE_LENGTH + 1];
+      step_serialize(buffer, &kv_A(steps, i));
+      printf("%s\n", buffer);
+    }
+
     if (ended_early) {
       gen_frame(fp, "LLF Resultado", "LLF: No Schedulable", steps.a,
                 kv_size(steps), tasks, task_n);
@@ -222,7 +228,7 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
 
   fclose(fp);
 
-  compile_tex();
+  // compile_tex();
 }
 
 // for testing
