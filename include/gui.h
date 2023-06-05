@@ -25,12 +25,4 @@ void window_on_delete_event(GtkWidget *widget, gpointer user_data);
 
 void on_changed_sbtn_task_num(GtkComboBox *widget, user_data_t *user_data);
 
-static void generate_configuration_rows(int row_n, user_data_t *user_data);
-
-static void clear_configuration_rows(user_data_t *user_data);
-
-static void success_dialog(void);
-
-static void failure_dialog(void);
-
 #endif // !GUI_H

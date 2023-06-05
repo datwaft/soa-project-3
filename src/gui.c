@@ -9,15 +9,24 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-GtkApplication *application_new(void) {
+static void generate_configuration_rows(int row_n, user_data_t *user_data);
+static void clear_configuration_rows(user_data_t *user_data);
+static void success_dialog(void);
+static void failure_dialog(void);
 
-  // prevent printing weird things
+GtkApplication *application_new(void) {
+  // Prevent some locale errors
   gtk_disable_setlocale();
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   GtkApplication *application =
       gtk_application_new(APPLICATION_ID, G_APPLICATION_FLAGS_NONE);
+#pragma clang diagnostic pop
+
   g_signal_connect(application, "activate", G_CALLBACK(application_on_activate),
                    NULL);
+
   return application;
 }
 
@@ -26,8 +35,6 @@ void application_on_activate(GtkApplication *app, gpointer _) {
       .builder = gtk_builder_new_from_resource(TEMPLATE_URI),
   };
   gtk_builder_connect_signals(user_data.builder, &user_data);
-
-  //   generate_configuration_rows(DEFAULT_THREAD_NUM, &user_data);
 
   GtkWidget *window =
       GTK_WIDGET(gtk_builder_get_object(user_data.builder, "window_main"));
@@ -97,7 +104,6 @@ static void generate_configuration_rows(int row_n, user_data_t *user_data) {
 }
 
 void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
-
   GtkComboBox *cb_display_mode = GTK_COMBO_BOX(
       gtk_builder_get_object(user_data->builder, "cb_display_mode"));
 
@@ -152,25 +158,21 @@ void on_button_execute_clicked(GtkWidget *widget, user_data_t *user_data) {
   if (!(rm_active || edf_active || llf_active)) {
     failure_dialog();
   } else {
-
     switch (display_option) {
     case 0:
       execute_n_display_separate(tasks, task_n, rm_active, edf_active,
                                  llf_active);
       break;
-
     case 1:
       execute_n_display_all_in_one(tasks, task_n, "Scheduling Resultados",
                                    rm_active, edf_active, llf_active);
       break;
     }
-
     success_dialog();
   }
 }
 
 static void success_dialog(void) {
-
   GtkWidget *message_widget = gtk_message_dialog_new(
       NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Exito!");
 
@@ -184,7 +186,6 @@ static void success_dialog(void) {
 }
 
 static void failure_dialog(void) {
-
   GtkWidget *message_widget = gtk_message_dialog_new(
       NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Error!");
 

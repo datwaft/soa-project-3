@@ -1,10 +1,14 @@
 #include "tex.h"
-#include "algorithms.h"
-#include "step.h"
-#include "task.h"
+
+#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "algorithms.h"
+#include "step.h"
+#include "task.h"
+
 /*
 Draw a single processing time.
 */
@@ -61,7 +65,7 @@ void gen_timeline(FILE *fp, const char *algorithm, step_t *steps, int steps_n,
   // draw periods
 
   for (int i = 0; i < task_n; i++) {
-    g_print("periodos id: %d - period: %d\n", tasks[i].id, tasks[i].period);
+    g_print("periodos id: %lld - period: %lld\n", tasks[i].id, tasks[i].period);
     int m = max / tasks[i].period;
     for (int j = 1; j <= m; j++) {
       draw_period(fp, tasks[i].id, tasks[i].period * j);

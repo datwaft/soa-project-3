@@ -14,6 +14,7 @@
     <property name="default-width">840</property>
     <property name="default-height">800</property>
     <property name="icon-name">template_app</property>
+    <signal name="delete_event" handler="window_on_delete_event" swapped="no"/>
     <child>
       <object class="GtkPaned">
         <property name="visible">True</property>
