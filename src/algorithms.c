@@ -284,8 +284,13 @@ steps_t steps_LLF(task_t const tasks[], size_t tasks_size) {
         if (next_task == NULL) {
           next_task = task;
         } else {
-          int64_t task_laxity = task->period - task->execution;
-          int64_t next_task_laxity = task->period - next_task->execution;
+          int64_t task_deadline =
+              ((tick - (tick % task->period)) + task->period);
+          int64_t next_task_deadline =
+              ((tick - (tick % next_task->period)) + next_task->period);
+          int64_t task_laxity = task_deadline - (tick - task->execution);
+          int64_t next_task_laxity =
+              next_task_deadline - (tick - next_task->execution);
           if (task_laxity < next_task_laxity) {
             next_task = task;
           } else if (task_laxity == next_task_laxity &&
