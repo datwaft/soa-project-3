@@ -215,5 +215,95 @@ Test(steps_RM, example_6) {
   bool ended_early = result.ended_early;
 
   cr_expect_arr_eq_cmp(steps.a, expected, 10, step_cmp);
-  cr_expect(ended_early);
+  cr_expect_not(ended_early);
+}
+
+// =========
+// steps_EDF
+// =========
+
+Test(steps_EDF, example_1) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 1}},
+      {.task_id = 2, .duration = {.start = 1, .finish = 3}},
+      {.task_id = 3, .duration = {.start = 3, .finish = 5}},
+      {.task_id = 1, .duration = {.start = 5, .finish = 6}},
+      {.task_id = 3, .duration = {.start = 6, .finish = 8}},
+      {.task_id = 2, .duration = {.start = 8, .finish = 10}},
+      {.task_id = 1, .duration = {.start = 10, .finish = 11}},
+      {.task_id = 3, .duration = {.start = 11, .finish = 13}},
+      {.task_id = 1, .duration = {.start = 15, .finish = 16}},
+      {.task_id = 2, .duration = {.start = 16, .finish = 18}},
+      {.task_id = 3, .duration = {.start = 19, .finish = 20}},
+      {.task_id = 1, .duration = {.start = 20, .finish = 21}},
+      {.task_id = 3, .duration = {.start = 21, .finish = 24}},
+      {.task_id = 2, .duration = {.start = 24, .finish = 25}},
+  };
+
+  task_t tasks[] = {
+      task_new(1, 5),
+      task_new(2, 8),
+      task_new(6, 19),
+  };
+  size_t tasks_size = 3;
+
+  steps_t result = steps_EDF(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
+
+  cr_expect_arr_eq_cmp(steps.a, expected, 14, step_cmp);
+  cr_expect_not(ended_early);
+}
+
+Test(steps_EDF, example_2) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 1}},
+      {.task_id = 2, .duration = {.start = 1, .finish = 3}},
+      {.task_id = 3, .duration = {.start = 3, .finish = 6}},
+      {.task_id = 1, .duration = {.start = 6, .finish = 7}},
+      {.task_id = 3, .duration = {.start = 7, .finish = 9}},
+      {.task_id = 2, .duration = {.start = 9, .finish = 11}},
+      {.task_id = 3, .duration = {.start = 11, .finish = 12}},
+      {.task_id = 1, .duration = {.start = 12, .finish = 13}},
+  };
+
+  task_t tasks[] = {
+      task_new(1, 6),
+      task_new(2, 9),
+      task_new(6, 18),
+  };
+  size_t tasks_size = 3;
+
+  steps_t result = steps_EDF(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
+
+  cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
+  cr_expect_not(ended_early);
+}
+
+Test(steps_EDF, example_3) {
+  step_t expected[] = {
+      {.task_id = 1, .duration = {.start = 0, .finish = 3}},
+      {.task_id = 2, .duration = {.start = 3, .finish = 6}},
+      {.task_id = 2, .duration = {.start = 6, .finish = 7}},
+      {.task_id = 1, .duration = {.start = 7, .finish = 9}},
+      {.task_id = 1, .duration = {.start = 9, .finish = 10}},
+      {.task_id = 2, .duration = {.start = 10, .finish = 12}},
+      {.task_id = 1, .duration = {.start = 12, .finish = 15}},
+      {.task_id = 2, .duration = {.start = 15, .finish = 17}},
+  };
+
+  task_t tasks[] = {
+      task_new(3, 6),
+      task_new(4, 9),
+  };
+  size_t tasks_size = 2;
+
+  steps_t result = steps_EDF(tasks, tasks_size);
+  step_vec_t steps = result.steps;
+  bool ended_early = result.ended_early;
+
+  cr_expect_arr_eq_cmp(steps.a, expected, kv_size(steps), step_cmp);
+  cr_expect_not(ended_early);
 }
