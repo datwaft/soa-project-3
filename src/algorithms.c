@@ -20,7 +20,7 @@ double calc_µ(task_t const tasks[], size_t tasks_size) {
 
 double calc_U_RM(size_t size) { return size * (pow(2.0, 1.0 / size) - 1.0); }
 
-step_vec_t steps_RM(task_t const tasks[], size_t tasks_size) {
+steps_t steps_RM(task_t const tasks[], size_t tasks_size) {
   task_t const *task; // Used for iteration
 
   HASHMAP(task_t, void) ready_queue;
@@ -54,15 +54,16 @@ step_vec_t steps_RM(task_t const tasks[], size_t tasks_size) {
         current_step.duration.finish = tick;
         kv_push(step_t, steps, current_step);
         hashmap_cleanup(&ready_queue);
-        return steps;
+        return (steps_t){.steps = steps, .ended_early = true};
       }
     }
     // Check if current task is due
-    if (current_task != NULL && tick % current_task->period == 0) {
+    if (current_task != NULL && tick % current_task->period == 0 &&
+        current_task_last_executed_time != current_task->execution) {
       current_step.duration.finish = tick;
       kv_push(step_t, steps, current_step);
       hashmap_cleanup(&ready_queue);
-      return steps;
+      return (steps_t){.steps = steps, .ended_early = true};
     }
     // If current task has finished execution
     if (current_task != NULL &&
@@ -111,5 +112,5 @@ step_vec_t steps_RM(task_t const tasks[], size_t tasks_size) {
     }
   }
   hashmap_cleanup(&ready_queue);
-  return steps;
+  return (steps_t){.steps = steps, .ended_early = false};
 }
