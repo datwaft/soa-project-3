@@ -142,6 +142,16 @@ void execute_n_display_all_in_one(task_t *tasks, int task_n,
   if (llf_active) {
     // calculate llf
     // gen_timeline(fp, "LLF", steps, steps_n, tasks, task_n);
+    steps_t result = steps_LLF(tasks, task_n);
+    step_vec_t steps = result.steps;
+    bool ended_early = result.ended_early;
+
+    if (ended_early) {
+      gen_timeline(fp, "LLF: No Schedulable", steps.a, kv_size(steps), tasks,
+                   task_n);
+    } else {
+      gen_timeline(fp, "LLF", steps.a, kv_size(steps), tasks, task_n);
+    }
   }
 
   fprintf(fp, "\\end{frame}\n");
@@ -197,6 +207,17 @@ void execute_n_display_separate(task_t *tasks, int task_n, int rm_active,
   if (llf_active) {
     // calculate llf
     // gen_frame(fp, "LLF Resultado", "LLF", steps, steps_n, tasks, task_n);
+    steps_t result = steps_LLF(tasks, task_n);
+    step_vec_t steps = result.steps;
+    bool ended_early = result.ended_early;
+
+    if (ended_early) {
+      gen_frame(fp, "LLF Resultado", "LLF: No Schedulable", steps.a,
+                kv_size(steps), tasks, task_n);
+    } else {
+      gen_frame(fp, "LLF Resultado", "LLF", steps.a, kv_size(steps), tasks,
+                task_n);
+    }
   }
 
   fclose(fp);
@@ -218,8 +239,10 @@ void compile_tex(void) {
   // otherwise pdf will have extra page with error
 
   char pdflatex_cmd[100];
-  sprintf(pdflatex_cmd, "pdflatex --job-name=RESULT -output-directory=%s %s",
-          PDFLATEX_OUT, BEAMER_TEX_TEMPLATE);
+  sprintf(
+      pdflatex_cmd,
+      "pdflatex -interaction=errorstopmode -output-directory=%s %s > /dev/null",
+      PDFLATEX_OUT, BEAMER_TEX_TEMPLATE);
 
   system(pdflatex_cmd);
   system(pdflatex_cmd);
